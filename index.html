@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyCat Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="page-container">
+        
+        <div class="sun-vector">
+            
+            <img src="images/logo.svg" alt="StudyCat Logo" class="logo">
+            
+            <form class="login-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" value="example@example.com">
+
+                <label for="password">Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="password" value="***********">
+                    <img src="images/vector-35.svg" alt="Show Password" class="password-toggle-icon">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="iniciar-button" onclick="window.location.href='pages/main.html'">
+                        Iniciar 
+                        <img src="images/vector-9.svg" alt="Heart" class="heart-icon">
+                    </button>
+                    <a href="#" class="forgot-password">Forget Password</a>
+                </div>
+            </form>
+
+            <div class="social-login-group">
+                <div class="social-icons">
+                    <button class="social-icon google-icon">
+                        <img src="images/gmail-27.svg" alt="Google">
+                    </button>
+                    <button class="social-icon facebook-icon">
+                        <img src="images/facebook-33.svg" alt="Facebook">
+                    </button>
+                    <button class="social-icon fingerprint-icon">
+                        <img src="images/mark-30.svg" alt="Fingerprint">
+                    </button>
+                </div>
+
+                <p class="sign-up-text">
+                    Don't have an account? <a href="pages/registro.html">Sign Up</a>
+                </p>
+                <p class="or-text">or sign up with</p>
+            </div>
+        </div>
+        
+        <a href="#" class="cancel-link">Cancelar</a>
+
+    </div>
+</body>
+</html>

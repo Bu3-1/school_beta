@@ -1,0 +1,130 @@
+:root {
+  /* Variables de Color */
+  --color-yellow: #7ed8fe; /* Amarillo del degradado */
+  --color-blue: #5891bc; /* Azul del degradado */
+  --color-white-translucent: rgba(
+    255,
+    255,
+    255,
+    0.75
+  ); /* Blanco semitransparente */
+  --color-orange-card: #ffb347; /* Naranja de las tarjetas */
+  --color-text-dark: #333;
+  --color-text-link: #d9534f; /* Rojo/Naranja para los enlaces del header */
+}
+
+/* 1. Estilos Globales y Fondo */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Permite el scroll si hay más contenido */
+  background: transparent; /* El fondo lo manejará el div .background */
+  color: var(--color-text-dark);
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Degradado de amarillo a azul, de abajo hacia arriba */
+  background: linear-gradient(to top, var(--color-yellow), var(--color-blue));
+  z-index: -2; /* Mantiene el fondo detrás de todo */
+}
+
+/* 2. Barra Superior (Header) */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px 10px;
+  color: white; /* Texto blanco sobre el azul */
+  position: relative;
+  z-index: 1; /* Asegura que esté sobre el fondo */
+}
+
+.top-bar h1 {
+  margin: 0;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: white;
+  /* Línea sutil debajo del título */
+  padding-bottom: 5px;
+  border-bottom: 3px solid var(--color-text-link);
+}
+
+.option-link {
+  font-size: 1em;
+  cursor: pointer;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--color-text-link);
+  color: white;
+}
+
+/* 3. Contenido Principal */
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Espacio entre las secciones */
+  flex-grow: 1;
+}
+
+.activity-section {
+  background: var(--color-white-translucent);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px); /* Efecto de cristal esmerilado */
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.activity-section h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+  font-weight: 500;
+  padding-bottom: 5px;
+  border-bottom: 3px solid var(--color-text-link);
+  display: inline-block; /* Ajusta el ancho de la línea al texto */
+  margin-bottom: 15px;
+}
+
+/* 4. Contenedor de Scroll Horizontal */
+.activities-scroller {
+  display: flex;
+  gap: 15px; /* Espacio entre las tarjetas */
+  overflow-x: auto; /* Permite el scroll horizontal */
+  padding-bottom: 15px;
+  scrollbar-color: var(--color-orange-card) var(--color-white-translucent);
+  scrollbar-width: thin;
+}
+
+.activities-scroller::-webkit-scrollbar {
+  height: 8px;
+}
+
+.activities-scroller::-webkit-scrollbar-thumb {
+  background-color: var(--color-orange-card);
+  border-radius: 10px;
+}
+
+.activities-scroller::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* 5. Tarjetas de Actividad */
+.activity-card {
+  min-width: 250px;
+  height: 150px;
+  background-color: var(--color-orange-card);
+  border-radius: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}

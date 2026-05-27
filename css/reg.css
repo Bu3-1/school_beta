@@ -1,0 +1,197 @@
+/* Variables for colors */
+:root {
+    --color-sky-blue: #cce0f0; 
+    --color-card-white: #fefefe; /* White for the new card */
+    --color-form-input: #e9d7a2; /* Muted yellow for input backgrounds */
+    --color-button-red: #9e4655; 
+    --color-link-orange: #f59639; 
+    --color-text-dark: #333;
+    --color-title-underline: #f59639; /* Orange underline for title */
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-sky-blue);
+    color: var(--color-text-dark);
+    display: flex; /* Use flexbox for page layout */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: flex-end; /* Push registration card to the right */
+    align-items: center;
+    position: relative;
+    padding: 20px; /* Some padding around the card */
+    box-sizing: border-box;
+}
+
+/* Sun SVG positioning on the left */
+.sun-vector-left {
+    position: absolute;
+    left: -10px; 
+    top: 50%;
+    transform: translateY(-50%);
+    width: 900px; /* Adjust size of the decorative sun */
+    height: 900px;
+    z-index: 5; /* Behind the card */
+    overflow: hidden; /* Hide parts that go off screen */
+}
+
+.sun-decoration {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Registration Card Styling */
+.registration-card {
+    background-color: var(--color-card-white);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Fixed width for the card */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 10; /* Ensure card is above the sun */
+    margin-right: 5%; /* Push slightly more to the right */
+}
+
+.card-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--color-text-dark);
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px; /* Underline width */
+    height: 3px;
+    background-color: var(--color-title-underline);
+    border-radius: 2px;
+}
+
+.registration-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: var(--color-text-dark);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: var(--color-form-input); /* Muted yellow for input backgrounds */
+    color: var(--color-text-dark);
+}
+
+.password-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px; 
+    cursor: pointer;
+}
+
+.card-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+/* Social Icons (similar to previous, but now distinct from the main button) */
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-button-red);
+    background-color: var(--color-button-red);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.social-icon img {
+    width: 70%;
+    height: 70%;
+}
+
+/* Iniciar Button */
+.iniciar-button {
+    background-color: var(--color-button-red);
+    color: white;
+    border: none;
+    border-radius: 20px; /* Rounded rectangle */
+    padding: 10px 20px;
+    min-width: 120px;
+    height: 40px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.heart-icon {
+    width: 15px; 
+}
+
+/* Regresar Link */
+.back-link {
+    color: var(--color-text-dark);
+    text-decoration: none;
+    font-size: 0.9em;
+    margin-top: 10px; /* Space from the buttons */
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

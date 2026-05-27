@@ -1,0 +1,153 @@
+/* --- ESTILOS GLOBALES Y CONTENEDOR PRINCIPAL --- */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Aplica la opacidad a 70% a los elementos clave */
+.opacidad-70 {
+  /* Usamos RGBA para que solo el fondo sea transparente, no el texto */
+  background-color: rgba(255, 255, 255, 0.719);
+}
+
+.fondo-cielo {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #a3d2f1; /* Azul simple */
+  z-index: 1;
+}
+
+.fondo-sol-img {
+  position: absolute;
+  top: -400px; /* Ajusta la posición verticalmente */
+  left: -200px; /* Ajusta la posición horizontalmente */
+  width: 900px; /* Define el tamaño de tu SVG */
+  height: 900px; /* Define el tamaño de tu SVG */
+  z-index: 3;
+}
+
+.fondo-pasto {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 70%;
+  background-color: #4e8634; /* Verde pasto */
+  border-top-left-radius: 50vw 100%;
+  border-top-right-radius: 50vw 100%;
+  z-index: 2;
+}
+
+/* Contenedor de las formas cremas/naranjas que se superponen */
+.fondo-transicion {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  z-index: 4;
+}
+
+/* --- BARRA DE NAVEGACIÓN SUPERIOR (NAV) --- */
+
+.nav-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: rgba(255, 255, 255, 0.692); /* Barra blanca */
+  z-index: 10; /* La capa más alta */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  box-sizing: border-box;
+  font-weight: bold;
+  color: #c04343; /* Rojo para los textos "Regresar" y "Opciones" */
+}
+
+.nav-opcion,
+.icono-usuario {
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.icono-usuario {
+  font-size: 2em; /* Haz el ícono más grande */
+  color: #6c6c6c;
+}
+
+/* --- CONTENIDO PRINCIPAL Y BOTONES --- */
+
+.contenido-principal {
+  position: absolute;
+  top: 80px; /* Debajo de la nav-bar */
+  width: 100%;
+  height: calc(100% - 80px);
+  z-index: 5;
+  display: flex;
+  padding: 40px 80px; /* Espacio alrededor de los contenedores */
+  box-sizing: border-box;
+  gap: 40px; /* Espacio entre el contenedor de Grupos y los botones */
+}
+
+/* Contenedor de GRUPOS a la izquierda */
+.grupo-principal {
+  width: 30%;
+  min-width: 200px;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.grupo-principal h3 {
+  color: #c04343; /* Rojo para el texto "Grupos" */
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.espacio-vacio {
+  flex-grow: 1;
+}
+
+.botones-clasificacion {
+  width: 60%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 30px;
+}
+
+.boton-nivel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #333;
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.boton-nivel:hover {
+  transform: translateY(-5px); /* Pequeño efecto al pasar el mouse */
+}

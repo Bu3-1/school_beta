@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyCat Registro</title>
+    <link rel="stylesheet" href="../css/reg.css">
+</head>
+<body>
+    <div class="page-container">
+        
+        <div class="sun-vector-left">
+            <img src="../images/suncomp.svg" alt="Sol decorativo" class="sun-decoration">
+        </div>
+
+        <div class="registration-card">
+            <h1 class="card-title">REGISTRARSE</h1>
+            
+            <form class="registration-form">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" value="usuario">
+
+                <label for="email">Email</label>
+                <input type="email" id="email" value="example@example.com">
+
+                <label for="password">Contraseña</label>
+                <div class="password-input-group">
+                    <input type="password" id="password" value="***********">
+                    <img src="../images/vector-35.svg" alt="Mostrar Contraseña" class="password-toggle-icon">
+                </div>
+
+                <label for="confirm-password">Otra vez su contraseña</label>
+                <div class="password-input-group">
+                    <input type="password" id="confirm-password" value="***********">
+                    <img src="../images/vector-35.svg" alt="Mostrar Contraseña" class="password-toggle-icon">
+                </div>
+            </form>
+
+            <div class="card-actions">
+                <div class="social-icons">
+                    <button class="social-icon google-icon">
+                        <img src="../images/gmail-27.svg" alt="Google">
+                    </button>
+                    <button class="social-icon facebook-icon">
+                        <img src="../images/facebook-33.svg" alt="Facebook">
+                    </button>
+                    <button class="social-icon fingerprint-icon">
+                        <img src="../images/mark-30.svg" alt="Huella Digital">
+                    </button>
+                </div>
+
+                    <button type="button" class="iniciar-button" onclick="window.location.href='../pages/main.html'">
+                        Iniciar 
+                        <img src="../images/vector-9.svg" alt="Heart" class="heart-icon">
+                    </button>
+            </div>
+            
+            <a href="../index.html" class="back-link">Regresar</a>
+        </div>
+
+    </div>
+</body>
+</html>

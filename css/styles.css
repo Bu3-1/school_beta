@@ -1,0 +1,225 @@
+
+/* Variables for colors */
+:root {
+    --color-sky-blue: #cce0f0; 
+    --color-card-yellow: #e9d7a2; 
+    --color-button-red: #9e4655; 
+    --color-link-orange: #f59639; 
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-sky-blue);
+    color: var(--color-text-dark);
+    /* Ensures the body defines the context for positioning elements */
+    position: relative; 
+    overflow: hidden;
+}
+
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* 1. The Sun Vector Container Positioning Fix */
+.sun-vector {
+    position: absolute;
+    /* FIX: Set top to 0 and center horizontally */
+    top: 0; 
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    /* These dimensions should match your vector's aspect ratio and size */
+    width: 1530px; 
+    height: 1530px;
+    
+    background-image: url('../images/vector-3.svg'); 
+    background-repeat: no-repeat;
+    background-position: center top; /* Center the vector image at the container's top */
+    background-size: contain; 
+    
+    /* Flex settings to center the form content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* Ensure content is positioned correctly relative to the sun vector */
+    padding-top: 50px;
+    z-index: 10;
+}
+
+/* 2. The Inner Yellow Circle (Simulated) */
+.sun-vector::before {
+    content: '';
+    position: absolute;
+    top: -500px;
+    left: calc(50% - 35px);
+    transform: translateX(-50%);
+    
+    /* Adjust these dimensions to match the light yellow area in your vector */
+    width: 1050px;
+    height: 1050px;
+    
+    background-color: var(--color-card-yellow);
+    border-radius: 50%; /* Perfect circle */
+    z-index: -1; /* Place it behind the form content but within the sun vector */
+}
+
+/* 3. Content Styling (Logo, Form, etc.) */
+
+.logo {
+    width: 150px; 
+    /* FIX: Push the logo down from the top edge of the 800px container */
+    margin-top: 0px; 
+    margin-bottom: 40px;
+    position: relative; 
+    z-index: 20; 
+}
+
+.login-form {
+    width: 80%; 
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 20;
+}
+
+/* ... (rest of the form and social styles remain the same) ... */
+
+label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    box-sizing: border-box;
+    font-size: 1em;
+    background-color: white;
+}
+
+.password-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px; 
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.iniciar-button {
+    background-color: var(--color-button-red);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    min-width: 100px;
+    height: 40px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.heart-icon {
+    width: 15px; 
+}
+
+.forgot-password {
+    color: var(--color-link-orange);
+    text-decoration: none;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.social-login-group {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    transform: translateY(-5px); 
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-button-red);
+    background-color: var(--color-button-red);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.social-icon img {
+    width: 70%;
+    height: 70%;
+}
+
+.sign-up-text {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+}
+
+.sign-up-text a {
+    color: var(--color-link-orange);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.or-text {
+    font-size: 0.8em;
+    margin: 10px 0 15px;
+}
+
+/* 4. Cancelar Link */
+.cancel-link {
+    color: var(--color-text-dark);
+    text-decoration: none;
+    font-size: 0.9em;
+    /* FIX: Position it near the bottom edge of the visible sun area */
+    margin-top: 20px; 
+    z-index: 5;
+}
