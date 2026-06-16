@@ -1,0 +1,108 @@
+
+<style>
+  .sc-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .sc-header { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .sc-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .story-card { background: #f0fdf4; border: 2px solid #4ade80; border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .story-title { font-size: 17px; font-weight: 500; color: #15803d; margin-bottom: 0.75rem; }
+  .story-body { font-size: 16px; line-height: 2; color: var(--color-text-primary); }
+  .story-body .syl { background: #bbf7d0; border-radius: 3px; padding: 1px 2px; font-weight: 500; color: #166534; }
+  .sec-label { font-size: 15px; font-weight: 500; color: #15803d; background: #dcfce7; border-radius: 8px; padding: 6px 14px; margin-bottom: 0.75rem; margin-top: 1.25rem; display: inline-block; }
+  .prog-bar { background: var(--color-border-tertiary); border-radius: 8px; height: 8px; margin-bottom: 1.25rem; overflow: hidden; }
+  .prog-fill { background: #22c55e; height: 100%; border-radius: 8px; transition: width 0.4s; }
+  .q-block { background: var(--color-background-primary); border: 1px solid var(--color-border-secondary); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .q-text { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
+  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .opt-btn { background: var(--color-background-secondary); border: 1.5px solid var(--color-border-secondary); border-radius: 10px; padding: 9px 12px; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 7px; color: var(--color-text-primary); text-align: left; transition: background 0.15s; }
+  .opt-btn:hover { background: #dcfce7; border-color: #4ade80; }
+  .opt-btn.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; pointer-events: none; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; pointer-events: none; }
+  .opt-btn.disabled { pointer-events: none; }
+  .q-fb { font-size: 13px; margin-top: 6px; font-weight: 500; min-height: 18px; }
+  .fb-ok { color: #15803d; } .fb-no { color: #b91c1c; }
+  .score-card { display: none; background: var(--color-background-primary); border: 2px solid #22c55e; border-radius: 16px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
+  .score-card.vis { display: block; }
+  .score-num { font-size: 48px; font-weight: 500; color: #22c55e; }
+  .score-msg { font-size: 17px; color: var(--color-text-secondary); margin-top: 0.5rem; }
+  .restart-btn { background: transparent; border: 1.5px solid #22c55e; color: #15803d; border-radius: 10px; padding: 8px 20px; font-size: 14px; cursor: pointer; margin-top: 1rem; }
+</style>
+<div class="sc-wrap">
+  <div class="sc-header">📚 Comprensión lectora silábica</div>
+  <div class="sc-sub">Lee el cuento y responde las preguntas. ¡Tú puedes!</div>
+
+  <div class="story-card">
+    <div class="story-title">🐱 El gato y la luna</div>
+    <div class="story-body">
+      <span class="syl">Mi</span>-<span class="syl">mo</span> es un <span class="syl">ga</span>-<span class="syl">to</span> <span class="syl">ne</span>-<span class="syl">gro</span>.<br>
+      <span class="syl">Vi</span>-<span class="syl">ve</span> en <span class="syl">u</span>-<span class="syl">na</span> <span class="syl">ca</span>-<span class="syl">sa</span> <span class="syl">ro</span>-<span class="syl">ja</span>.<br>
+      <span class="syl">To</span>-<span class="syl">das</span> las <span class="syl">no</span>-<span class="syl">ches</span>, <span class="syl">Mi</span>-<span class="syl">mo</span> <span class="syl">sa</span>-<span class="syl">le</span> al <span class="syl">jar</span>-<span class="syl">dín</span>.<br>
+      <span class="syl">Mi</span>-<span class="syl">ra</span> la <span class="syl">lu</span>-<span class="syl">na</span> y <span class="syl">can</span>-<span class="syl">ta</span>: <em>"¡miau, miau!"</em> 🌙<br>
+      Su <span class="syl">a</span>-<span class="syl">mi</span>-<span class="syl">go</span> el <span class="syl">pe</span>-<span class="syl">rro</span> <span class="syl">la</span>-<span class="syl">dra</span> <span class="syl">con</span> <span class="syl">él</span>. 🐶<br>
+      Los <span class="syl">dos</span> son <span class="syl">muy</span> <span class="syl">fe</span>-<span class="syl">li</span>-<span class="syl">ces</span>. 😸
+    </div>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+  <div id="qArea"></div>
+  <div class="score-card" id="scoreCard">
+    <div class="score-num" id="sNum">0/5</div>
+    <div class="score-msg" id="sMsg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Intentar de nuevo</button>
+  </div>
+</div>
+<script>
+const qs = [
+  { q:"¿Cómo se llama el gato?", opts:[{e:"🐱",l:"Mimo"},{e:"🐯",l:"Tigre"},{e:"🐻",l:"Oso"},{e:"🐭",l:"Remi"}], c:0 },
+  { q:"¿De qué color es el gato?", opts:[{e:"🟠",l:"Naranja"},{e:"⬛",l:"Negro"},{e:"🟤",l:"Café"},{e:"⬜",l:"Blanco"}], c:1 },
+  { q:"¿Dónde vive Mimo?", opts:[{e:"🏰",l:"En un castillo"},{e:"🌳",l:"En el bosque"},{e:"🏠",l:"En una casa roja"},{e:"🌊",l:"En el mar"}], c:2 },
+  { q:"¿Qué hace Mimo en el jardín?", opts:[{e:"😴",l:"Duerme"},{e:"🎵",l:"Canta mirando la luna"},{e:"🍖",l:"Come"},{e:"⚽",l:"Juega"}], c:1 },
+  { q:"¿Quién es el amigo de Mimo?", opts:[{e:"🐱",l:"Otro gato"},{e:"🐦",l:"Un pájaro"},{e:"🐟",l:"Un pez"},{e:"🐶",l:"El perro"}], c:3 },
+];
+
+let cur = 0, score = 0;
+
+function render() {
+  const area = document.getElementById('qArea');
+  document.getElementById('pFill').style.width = (cur/qs.length*100)+'%';
+  if (cur >= qs.length) { area.innerHTML=''; showScore(); return; }
+  const q = qs[cur];
+  let opts = q.opts.map((o,i) =>
+    `<button class="opt-btn" id="o${i}" onclick="pick(${i},${q.c})">
+      <span>${o.e}</span> ${o.l}
+    </button>`
+  ).join('');
+  area.innerHTML = `<div class="q-block">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;">Pregunta ${cur+1} de ${qs.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="opt-grid">${opts}</div>
+    <div class="q-fb" id="qfb"></div>
+  </div>`;
+}
+
+function pick(idx, correct) {
+  for(let i=0;i<4;i++) { const b=document.getElementById('o'+i); if(b) b.classList.add('disabled'); }
+  const fb = document.getElementById('qfb');
+  if (idx === correct) {
+    document.getElementById('o'+idx).classList.add('correct');
+    fb.innerHTML = '<span class="fb-ok">✅ ¡Muy bien!</span>';
+    score++;
+  } else {
+    document.getElementById('o'+idx).classList.add('wrong');
+    document.getElementById('o'+correct).classList.add('correct');
+    fb.innerHTML = '<span class="fb-no">❌ La respuesta correcta está en verde.</span>';
+  }
+  setTimeout(() => { cur++; render(); }, 1500);
+}
+
+function showScore() {
+  document.getElementById('pFill').style.width = '100%';
+  const card = document.getElementById('scoreCard');
+  card.classList.add('vis');
+  document.getElementById('sNum').textContent = score+' / '+qs.length;
+  const msgs = ["¡Sigue intentando! 💪","¡Casi! Vuelve a leer el cuento 📖","¡Bien hecho! 🌟","¡Muy bien! Casi perfecto 🎉","¡Excelente! ¡Eres un lector increíble! 🏆"];
+  document.getElementById('sMsg').textContent = msgs[Math.min(score, msgs.length-1)];
+}
+
+function restart() { cur=0; score=0; document.getElementById('scoreCard').classList.remove('vis'); render(); }
+render();
+</script>

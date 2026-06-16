@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lectura Alfabética</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f7ff; min-height: 100vh; padding: 32px 24px; }
+
+  .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: #333; }
+  .page-subtitle { font-size: 14px; color: #666; margin-bottom: 28px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-right: 8px; }
+  .badge-level { background: #bbdefb; color: #0d47a1; }
+  .badge-inst  { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+  .badge-num   { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: 2px solid currentColor; font-size: 11px; font-weight: 700; }
+
+  .section { margin-bottom: 32px; }
+
+  /* ① Une palabra con imagen */
+  .match-area { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+  .words-col { display: flex; flex-direction: column; gap: 14px; }
+  .images-col { display: flex; flex-direction: column; gap: 14px; }
+  .word-chip { padding: 10px 20px; border-radius: 24px; background: #fff; border: 2px solid #90caf9; font-size: 18px; font-weight: 700; color: #1565c0; cursor: pointer; text-align: center; transition: all 0.15s; user-select: none; }
+  .word-chip:hover { background: #e3f2fd; }
+  .word-chip.selected { background: #bbdefb; border-color: #1976d2; }
+  .word-chip.matched  { background: #e8f5e9; border-color: #43a047; color: #2e7d32; pointer-events: none; }
+  .word-chip.wrong    { background: #ffebee; border-color: #e53935; color: #b71c1c; }
+  .img-chip { display: flex; align-items: center; justify-content: center; width: 70px; height: 70px; border-radius: 14px; background: #fff; border: 2px dashed #90caf9; font-size: 40px; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .img-chip:hover { border-color: #1976d2; background: #e3f2fd; }
+  .img-chip.matched { border: 2px solid #43a047; background: #e8f5e9; }
+  .connector-area { position: relative; width: 60px; height: 320px; }
+  .connector-area svg { position: absolute; top:0; left:0; width:100%; height:100%; overflow:visible; }
+
+  /* ② Lee y elige la imagen correcta */
+  .read-cards { display: flex; flex-direction: column; gap: 20px; }
+  .read-card { background: #fff; border: 1.5px solid #bbdefb; border-radius: 16px; padding: 18px; }
+  .read-word  { font-size: 28px; font-weight: 800; color: #1565c0; text-align: center; margin-bottom: 14px; letter-spacing: 2px; }
+  .options-row { display: flex; gap: 14px; justify-content: center; }
+  .opt-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 14px; border: 2px solid #bbdefb; background: #f5f9ff; cursor: pointer; font-size: 32px; transition: all 0.15s; }
+  .opt-btn:hover { border-color: #1976d2; background: #e3f2fd; }
+  .opt-btn.correct { border-color: #43a047; background: #e8f5e9; }
+  .opt-btn.wrong   { border-color: #e53935; background: #ffebee; }
+  .opt-label { font-size: 11px; color: #888; }
+
+  /* ③ Lee la oración y marca verdadero o falso */
+  .sentence-box { background: #fff; border: 1.5px solid #bbdefb; border-radius: 16px; padding: 18px 20px; margin-bottom: 14px; }
+  .sentence-text { font-size: 20px; font-weight: 600; color: #222; margin-bottom: 12px; line-height: 1.4; }
+  .tf-row { display: flex; gap: 12px; }
+  .tf-btn { flex: 1; padding: 9px; border-radius: 10px; border: 2px solid #90caf9; background: #f5f9ff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .tf-btn:hover { background: #e3f2fd; }
+  .tf-btn.selected-v { background: #e8f5e9; border-color: #43a047; color: #2e7d32; }
+  .tf-btn.selected-f { background: #ffebee; border-color: #e53935; color: #b71c1c; }
+  .tf-btn.correct { background: #e8f5e9; border-color: #43a047; color: #2e7d32; }
+  .tf-btn.wrong   { background: #ffebee; border-color: #e53935; color: #b71c1c; }
+
+  .check-btn { display: block; margin: 8px auto 0; padding: 10px 28px; border-radius: 22px; border: none; background: #1976d2; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .check-btn:hover { background: #0d47a1; }
+  .feedback { text-align: center; font-size: 14px; font-weight: 600; margin-top: 8px; min-height: 20px; }
+  .feedback.correct { color: #2e7d32; }
+  .feedback.wrong   { color: #c62828; }
+
+  hr { border:none; border-top:1.5px solid #bbdefb; margin: 8px 0 24px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span style="font-size:24px;">📖</span>
+  <h1>Lectura alfabética</h1>
+</div>
+<p class="page-subtitle">Lee las palabras y encuentra su significado.</p>
+
+<div style="margin-bottom:20px;">
+  <span class="badge badge-level">⭐ Nivel: Alfabético</span>
+  <span class="badge badge-inst"><span class="badge-num">①</span> Une la palabra con su imagen</span>
+</div>
+
+<!-- SECCIÓN 1: Une palabra con imagen -->
+<div class="section">
+  <p style="font-size:13px;color:#666;margin-bottom:14px;">Toca una palabra y luego la imagen que le corresponde.</p>
+  <div class="match-area">
+    <div class="words-col" id="words-col">
+      <div class="word-chip" data-id="1" onclick="selectWord(this)">PERA</div>
+      <div class="word-chip" data-id="2" onclick="selectWord(this)">TREN</div>
+      <div class="word-chip" data-id="3" onclick="selectWord(this)">LIBRO</div>
+      <div class="word-chip" data-id="4" onclick="selectWord(this)">NUBE</div>
+    </div>
+    <div class="connector-area"><svg id="lines-svg"></svg></div>
+    <div class="images-col" id="imgs-col">
+      <div class="img-chip" data-id="3" onclick="selectImg(this)">📚</div>
+      <div class="img-chip" data-id="1" onclick="selectImg(this)">🍐</div>
+      <div class="img-chip" data-id="4" onclick="selectImg(this)">☁️</div>
+      <div class="img-chip" data-id="2" onclick="selectImg(this)">🚂</div>
+    </div>
+  </div>
+  <p class="feedback" id="fb-match"></p>
+</div>
+
+<hr>
+
+<div style="margin-bottom:20px;">
+  <span class="badge badge-inst"><span class="badge-num">②</span> Lee y elige la imagen correcta</span>
+</div>
+
+<!-- SECCIÓN 2: Lee la palabra, elige la imagen -->
+<div class="section">
+  <div class="read-cards">
+    <div class="read-card">
+      <div class="read-word">GATO</div>
+      <div class="options-row">
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🐕<span class="opt-label">perro</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'correct')">🐱<span class="opt-label">gato</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🐰<span class="opt-label">conejo</span></button>
+      </div>
+    </div>
+    <div class="read-card">
+      <div class="read-word">ÁRBOL</div>
+      <div class="options-row">
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🌸<span class="opt-label">flor</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🌵<span class="opt-label">cactus</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'correct')">🌳<span class="opt-label">árbol</span></button>
+      </div>
+    </div>
+    <div class="read-card">
+      <div class="read-word">PELOTA</div>
+      <div class="options-row">
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🎮<span class="opt-label">juego</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'correct')">⚽<span class="opt-label">pelota</span></button>
+        <button class="opt-btn" onclick="chooseImg(this,'wrong')">🎲<span class="opt-label">dado</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div style="margin-bottom:20px;">
+  <span class="badge badge-inst"><span class="badge-num">③</span> Lee la oración: ¿verdadero o falso?</span>
+</div>
+
+<!-- SECCIÓN 3: Verdadero o Falso -->
+<div class="section">
+  <div id="tf-section">
+    <div class="sentence-box" data-correct="V">
+      <p class="sentence-text">🐟 El pez vive en el agua.</p>
+      <div class="tf-row">
+        <button class="tf-btn" onclick="selectTF(this,'V')">✅ Verdadero</button>
+        <button class="tf-btn" onclick="selectTF(this,'F')">❌ Falso</button>
+      </div>
+    </div>
+    <div class="sentence-box" data-correct="F">
+      <p class="sentence-text">🌙 El sol sale de noche.</p>
+      <div class="tf-row">
+        <button class="tf-btn" onclick="selectTF(this,'V')">✅ Verdadero</button>
+        <button class="tf-btn" onclick="selectTF(this,'F')">❌ Falso</button>
+      </div>
+    </div>
+    <div class="sentence-box" data-correct="V">
+      <p class="sentence-text">🐦 El pájaro tiene alas.</p>
+      <div class="tf-row">
+        <button class="tf-btn" onclick="selectTF(this,'V')">✅ Verdadero</button>
+        <button class="tf-btn" onclick="selectTF(this,'F')">❌ Falso</button>
+      </div>
+    </div>
+    <div class="sentence-box" data-correct="F">
+      <p class="sentence-text">🐘 El elefante es muy pequeño.</p>
+      <div class="tf-row">
+        <button class="tf-btn" onclick="selectTF(this,'V')">✅ Verdadero</button>
+        <button class="tf-btn" onclick="selectTF(this,'F')">❌ Falso</button>
+      </div>
+    </div>
+  </div>
+  <button class="check-btn" onclick="checkTF()">Revisar ✓</button>
+  <p class="feedback" id="fb-tf"></p>
+</div>
+
+<script>
+// ── Sección 1: Une ──
+let selectedWord = null;
+function selectWord(el){
+  if(el.classList.contains('matched')) return;
+  document.querySelectorAll('.word-chip.selected').forEach(e=>e.classList.remove('selected'));
+  selectedWord = el;
+  el.classList.add('selected');
+}
+function selectImg(el){
+  if(!selectedWord || el.classList.contains('matched')) return;
+  if(selectedWord.dataset.id === el.dataset.id){
+    selectedWord.classList.remove('selected');
+    selectedWord.classList.add('matched');
+    el.classList.add('matched');
+    drawLine(selectedWord, el);
+    selectedWord = null;
+    // check all matched
+    const total = document.querySelectorAll('.word-chip').length;
+    const done  = document.querySelectorAll('.word-chip.matched').length;
+    if(done===total) document.getElementById('fb-match').innerHTML='<span style="color:#2e7d32;font-weight:700;">¡Perfecto! Todas unidas correctamente 🎉</span>';
+  } else {
+    selectedWord.classList.remove('selected');
+    selectedWord.classList.add('wrong');
+    setTimeout(()=>{ selectedWord.classList.remove('wrong'); }, 700);
+    selectedWord = null;
+  }
+}
+function drawLine(wordEl, imgEl){
+  const svg = document.getElementById('lines-svg');
+  const svgRect = svg.getBoundingClientRect();
+  const wRect = wordEl.getBoundingClientRect();
+  const iRect = imgEl.getBoundingClientRect();
+  const x1=0, y1=(wRect.top+wRect.bottom)/2 - svgRect.top;
+  const x2=svgRect.width, y2=(iRect.top+iRect.bottom)/2 - svgRect.top;
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+  line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+  line.setAttribute('stroke','#43a047'); line.setAttribute('stroke-width','2.5');
+  line.setAttribute('stroke-dasharray','6,3');
+  svg.appendChild(line);
+}
+
+// ── Sección 2: Elige imagen ──
+function chooseImg(btn, type){
+  const card = btn.closest('.read-card');
+  card.querySelectorAll('.opt-btn').forEach(b=>{b.classList.remove('correct','wrong'); b.disabled=false;});
+  btn.classList.add(type);
+  card.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+}
+
+// ── Sección 3: VoF ──
+function selectTF(btn, val){
+  const row = btn.closest('.tf-row');
+  row.querySelectorAll('.tf-btn').forEach(b=>{
+    b.classList.remove('selected-v','selected-f');
+    b.dataset.choice='';
+  });
+  btn.classList.add(val==='V'?'selected-v':'selected-f');
+  btn.dataset.choice=val;
+}
+function checkTF(){
+  const boxes = document.querySelectorAll('.sentence-box');
+  let correct=0, answered=0;
+  boxes.forEach(box=>{
+    const expected = box.dataset.correct;
+    const chosen   = box.querySelector('[data-choice]');
+    const choice   = chosen ? chosen.dataset.choice : '';
+    if(!choice) return;
+    answered++;
+    box.querySelectorAll('.tf-btn').forEach(b=>{
+      b.classList.remove('selected-v','selected-f','correct','wrong');
+    });
+    if(choice===expected){ chosen.classList.add('correct'); correct++; }
+    else { chosen.classList.add('wrong'); }
+  });
+  const fb=document.getElementById('fb-tf');
+  if(answered<boxes.length){ fb.textContent='Responde todas las oraciones primero.'; fb.className='feedback wrong'; return; }
+  if(correct===boxes.length){ fb.textContent='¡Excelente! Todas correctas 🌟'; fb.className='feedback correct'; }
+  else { fb.textContent=`${correct} de ${boxes.length} correctas. ¡Casi!`; fb.className='feedback wrong'; }
+}
+</script>
+</body>
+</html>

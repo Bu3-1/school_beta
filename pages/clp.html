@@ -1,0 +1,278 @@
+
+<style>
+  .act-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .story-card { background: #fffbe6; border: 2px solid #f9c74f; border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .story-title { font-size: 18px; font-weight: 500; color: #b45309; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+  .story-text { font-size: 17px; line-height: 1.8; color: var(--color-text-primary); }
+  .story-text span.hl { background: #fde68a; border-radius: 4px; padding: 0 3px; }
+  .section-label { font-size: 15px; font-weight: 500; color: var(--color-text-secondary); margin: 1.5rem 0 0.75rem; }
+  .q-block { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .q-text { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .opt-btn { background: var(--color-background-secondary); border: 1.5px solid var(--color-border-secondary); border-radius: 10px; padding: 10px 12px; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.15s, border-color 0.15s; color: var(--color-text-primary); text-align: left; }
+  .opt-btn:hover { background: #e0f2fe; border-color: #38bdf8; }
+  .opt-btn.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+  .opt-btn.disabled { pointer-events: none; }
+  .emoji-img { font-size: 26px; line-height: 1; }
+  .q-feedback { font-size: 14px; margin-top: 8px; min-height: 20px; font-weight: 500; }
+  .feedback-ok { color: #15803d; }
+  .feedback-no { color: #b91c1c; }
+  .order-section { margin-bottom: 1rem; }
+  .order-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .order-card { background: var(--color-background-secondary); border: 1.5px solid var(--color-border-secondary); border-radius: 10px; padding: 8px 12px; cursor: pointer; font-size: 22px; text-align: center; min-width: 60px; transition: background 0.15s; }
+  .order-card.selected { border-color: #6366f1; background: #eef2ff; }
+  .order-card.placed { opacity: 0.4; pointer-events: none; }
+  .order-slots { display: flex; gap: 8px; flex-wrap: wrap; }
+  .order-slot { width: 64px; height: 54px; border: 2px dashed var(--color-border-secondary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--color-background-secondary); cursor: pointer; transition: background 0.15s; }
+  .order-slot.filled { border-style: solid; border-color: #6366f1; background: #eef2ff; }
+  .order-slot.correct-slot { border-color: #22c55e; background: #dcfce7; }
+  .order-slot.wrong-slot { border-color: #ef4444; background: #fee2e2; }
+  .check-btn { background: #6366f1; color: #fff; border: none; border-radius: 10px; padding: 10px 24px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 8px; }
+  .check-btn:hover { background: #4f46e5; }
+  .check-btn:disabled { background: var(--color-border-secondary); cursor: default; }
+  .progress-bar { background: var(--color-border-tertiary); border-radius: 8px; height: 8px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-fill { background: #6366f1; height: 100%; border-radius: 8px; transition: width 0.4s; }
+  .score-card { display: none; background: var(--color-background-primary); border: 2px solid #6366f1; border-radius: 16px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
+  .score-card.visible { display: block; }
+  .score-num { font-size: 48px; font-weight: 500; color: #6366f1; }
+  .score-msg { font-size: 18px; color: var(--color-text-secondary); margin-top: 0.5rem; }
+  .restart-btn { background: transparent; border: 1.5px solid #6366f1; color: #6366f1; border-radius: 10px; padding: 8px 20px; font-size: 14px; cursor: pointer; margin-top: 1rem; }
+  .restart-btn:hover { background: #eef2ff; }
+  h2.act-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+</style>
+
+<div class="act-wrap">
+  <h2 class="act-title"><span>📖</span> ¡Hora de leer y aprender!</h2>
+
+  <div class="story-card">
+    <div class="story-title"><span>🌳</span> El conejo y la zanahoria</div>
+    <div class="story-text">
+      <span class="hl">Beni</span> es un <span class="hl">conejo</span> blanco y esponjoso.<br>
+      Beni vive en el <span class="hl">bosque</span> con sus amigos.<br>
+      Un día, Beni encontró una <span class="hl">zanahoria</span> muy grande.<br>
+      ¡Era <span class="hl">naranja</span> y olía muy rico!<br>
+      Beni la compartió con su amiga la <span class="hl">tortuga</span>.<br>
+      Los dos quedaron muy <span class="hl">felices</span>. 🐢🥕
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+
+  <div id="questionArea"></div>
+  <div class="score-card" id="scoreCard">
+    <div class="score-num" id="scoreNum">0/5</div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Intentar de nuevo</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    type: "choice",
+    text: "¿Cómo se llama el conejo?",
+    options: [
+      { emoji: "🐇", label: "Beni" },
+      { emoji: "🦊", label: "Tito" },
+      { emoji: "🐻", label: "Nano" },
+      { emoji: "🐭", label: "Pepe" }
+    ],
+    correct: 0
+  },
+  {
+    type: "choice",
+    text: "¿De qué color es el conejo?",
+    options: [
+      { emoji: "🟠", label: "Naranja" },
+      { emoji: "⬛", label: "Negro" },
+      { emoji: "⬜", label: "Blanco" },
+      { emoji: "🟤", label: "Café" }
+    ],
+    correct: 2
+  },
+  {
+    type: "choice",
+    text: "¿Qué encontró Beni?",
+    options: [
+      { emoji: "🍎", label: "Una manzana" },
+      { emoji: "🥕", label: "Una zanahoria" },
+      { emoji: "🍌", label: "Un plátano" },
+      { emoji: "🌽", label: "Un elote" }
+    ],
+    correct: 1
+  },
+  {
+    type: "choice",
+    text: "¿Con quién compartió la zanahoria?",
+    options: [
+      { emoji: "🐸", label: "La rana" },
+      { emoji: "🦋", label: "La mariposa" },
+      { emoji: "🐢", label: "La tortuga" },
+      { emoji: "🐦", label: "El pájaro" }
+    ],
+    correct: 2
+  },
+  {
+    type: "order",
+    text: "Ordena lo que pasó en el cuento 👇",
+    items: [
+      { emoji: "🤝", label: "Compartió" },
+      { emoji: "🌳", label: "Vivía en el bosque" },
+      { emoji: "😊", label: "Quedaron felices" },
+      { emoji: "🥕", label: "Encontró zanahoria" }
+    ],
+    correctOrder: [1, 3, 0, 2]
+  }
+];
+
+let current = 0;
+let score = 0;
+let orderSelected = null;
+let orderPlaced = [];
+let orderChecked = false;
+
+function render() {
+  const area = document.getElementById('questionArea');
+  const prog = document.getElementById('progFill');
+  prog.style.width = (current / questions.length * 100) + '%';
+  if (current >= questions.length) {
+    area.innerHTML = '';
+    showScore();
+    return;
+  }
+  const q = questions[current];
+  if (q.type === 'choice') renderChoice(q, area);
+  else renderOrder(q, area);
+}
+
+function renderChoice(q, area) {
+  let html = `<div class="q-block">
+    <div class="section-label">Pregunta ${current + 1} de ${questions.length}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="options-grid">`;
+  q.options.forEach((opt, i) => {
+    html += `<button class="opt-btn" id="opt${i}" onclick="pickChoice(${i}, ${q.correct})">
+      <span class="emoji-img">${opt.emoji}</span> ${opt.label}
+    </button>`;
+  });
+  html += `</div><div class="q-feedback" id="qfeedback"></div></div>`;
+  area.innerHTML = html;
+}
+
+function pickChoice(idx, correct) {
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.classList.add('disabled'));
+  const fb = document.getElementById('qfeedback');
+  if (idx === correct) {
+    btns[idx].classList.add('correct');
+    fb.innerHTML = '<span class="feedback-ok">✅ ¡Muy bien!</span>';
+    score++;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correct].classList.add('correct');
+    fb.innerHTML = '<span class="feedback-no">❌ Casi. La respuesta correcta está marcada en verde.</span>';
+  }
+  setTimeout(() => { current++; render(); }, 1600);
+}
+
+function renderOrder(q, area) {
+  orderSelected = null;
+  orderPlaced = new Array(q.items.length).fill(null);
+  orderChecked = false;
+
+  let cards = q.items.map((it, i) =>
+    `<div class="order-card" id="ocard${i}" onclick="selectCard(${i})">${it.emoji}<br><span style="font-size:11px;color:var(--color-text-secondary)">${it.label}</span></div>`
+  ).join('');
+
+  let slots = q.items.map((_, i) =>
+    `<div class="order-slot" id="oslot${i}" onclick="placeCard(${i})">${i + 1}</div>`
+  ).join('');
+
+  area.innerHTML = `<div class="q-block">
+    <div class="section-label">Pregunta ${current + 1} de ${questions.length}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="order-section">
+      <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:6px;">Toca una imagen y luego toca el cuadro donde va:</div>
+      <div class="order-row">${cards}</div>
+      <div class="order-slots">${slots}</div>
+    </div>
+    <div class="q-feedback" id="qfeedback"></div>
+    <button class="check-btn" id="checkBtn" onclick="checkOrder()" disabled>Comprobar ✔</button>
+  </div>`;
+}
+
+function selectCard(i) {
+  if (orderChecked) return;
+  const q = questions[current];
+  if (document.getElementById('ocard' + i).classList.contains('placed')) return;
+  document.querySelectorAll('.order-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('ocard' + i).classList.add('selected');
+  orderSelected = i;
+}
+
+function placeCard(slotIdx) {
+  if (orderChecked || orderSelected === null) return;
+  const q = questions[current];
+  const prevInSlot = orderPlaced[slotIdx];
+  if (prevInSlot !== null) {
+    document.getElementById('ocard' + prevInSlot).classList.remove('placed');
+    document.getElementById('oslot' + slotIdx).innerHTML = slotIdx + 1;
+    document.getElementById('oslot' + slotIdx).classList.remove('filled');
+  }
+  orderPlaced[slotIdx] = orderSelected;
+  document.getElementById('ocard' + orderSelected).classList.add('placed');
+  document.getElementById('ocard' + orderSelected).classList.remove('selected');
+  document.getElementById('oslot' + slotIdx).innerHTML = q.items[orderSelected].emoji;
+  document.getElementById('oslot' + slotIdx).classList.add('filled');
+  orderSelected = null;
+  document.getElementById('checkBtn').disabled = orderPlaced.some(p => p === null);
+}
+
+function checkOrder() {
+  orderChecked = true;
+  const q = questions[current];
+  let allOk = true;
+  orderPlaced.forEach((cardIdx, slotIdx) => {
+    const slot = document.getElementById('oslot' + slotIdx);
+    if (q.correctOrder[slotIdx] === cardIdx) {
+      slot.classList.add('correct-slot');
+    } else {
+      slot.classList.add('wrong-slot');
+      allOk = false;
+    }
+  });
+  const fb = document.getElementById('qfeedback');
+  if (allOk) {
+    fb.innerHTML = '<span class="feedback-ok">✅ ¡Perfecto! Ordenaste todo bien.</span>';
+    score++;
+  } else {
+    fb.innerHTML = '<span class="feedback-no">❌ Revisa el orden. Los cuadros rojos están en lugar incorrecto.</span>';
+  }
+  document.getElementById('checkBtn').disabled = true;
+  setTimeout(() => { current++; render(); }, 2200);
+}
+
+function showScore() {
+  document.getElementById('progFill').style.width = '100%';
+  const card = document.getElementById('scoreCard');
+  card.classList.add('visible');
+  document.getElementById('scoreNum').textContent = score + ' / ' + questions.length;
+  const msgs = [
+    "¡Sigue practicando! 💪",
+    "¡Vas bien! Inténtalo otra vez 🌟",
+    "¡Muy bien! Casi lo logras 😊",
+    "¡Excelente! ¡Casi perfecto! 🎉",
+    "¡Felicidades! ¡Eres un campeón! 🏆"
+  ];
+  document.getElementById('scoreMsg').textContent = msgs[Math.min(score, msgs.length - 1)];
+}
+
+function restart() {
+  current = 0; score = 0; orderSelected = null; orderPlaced = []; orderChecked = false;
+  document.getElementById('scoreCard').classList.remove('visible');
+  render();
+}
+
+render();
+</script>

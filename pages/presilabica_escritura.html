@@ -1,0 +1,89 @@
+
+<style>
+  .pw-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .pw-header { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .pw-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .pw-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .pw-cell { background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 12px; padding: 12px 8px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .pw-cell.center-cell { background: #eff6ff; border-color: #60a5fa; justify-content: center; }
+  .pw-emoji { font-size: 48px; line-height: 1; }
+  .pw-word { font-size: 15px; color: var(--color-text-primary); display: flex; align-items: center; gap: 2px; flex-wrap: wrap; justify-content: center; }
+  .pw-fixed { font-size: 16px; font-weight: 500; letter-spacing: 1px; }
+  .pw-box { width: 22px; height: 26px; border: none; border-bottom: 2.5px solid #6366f1; background: transparent; text-align: center; font-size: 18px; font-weight: 500; color: #6366f1; outline: none; padding: 0; text-transform: lowercase; }
+  .pw-box.ok { border-color: #22c55e; color: #15803d; }
+  .pw-box.err { border-color: #ef4444; color: #b91c1c; }
+  .hint-tag { font-size: 11px; color: #6366f1; background: #eef2ff; border-radius: 6px; padding: 2px 7px; }
+  .hint-tag.center { font-size: 22px; font-weight: 500; color: #1d4ed8; background: transparent; }
+  .check-btn { margin-top: 1.25rem; background: #6366f1; color: #fff; border: none; border-radius: 10px; padding: 10px 28px; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .check-btn:hover { background: #4f46e5; }
+  .result-msg { margin-top: 0.75rem; font-size: 15px; font-weight: 500; min-height: 22px; }
+  .ok-msg { color: #15803d; } .err-msg { color: #b91c1c; }
+  .restart-btn { background: transparent; border: 1.5px solid #6366f1; color: #6366f1; border-radius: 10px; padding: 7px 18px; font-size: 13px; cursor: pointer; margin-top: 8px; }
+</style>
+<div class="pw-wrap">
+  <div class="pw-header">✏️ ¿Cómo terminan?</div>
+  <div class="pw-sub">Escribe las letras con las que terminan las palabras. La sílaba del centro te ayuda.</div>
+  <div class="pw-grid" id="grid"></div>
+  <button class="check-btn" onclick="checkAll()">Comprobar ✔</button>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="restart-btn" onclick="restartAct()">🔄 Intentar de nuevo</button>
+</div>
+<script>
+const items = [
+  { emoji:"🦋", partial:"maripo", blanks:2, answer:"sa" },
+  { emoji:"👕", partial:"cami",   blanks:2, answer:"sa" },
+  { emoji:"🍓", partial:"fre",    blanks:2, answer:"sa" },
+  { emoji:"🪼", partial:"medu",   blanks:2, answer:"sa" },
+  { type:"center", label:"sa" },
+  { emoji:"🌹", partial:"ro",     blanks:2, answer:"sa" },
+  { emoji:"👜", partial:"bol",    blanks:2, answer:"sa" },
+  { emoji:"🧸", partial:"o",      blanks:2, answer:"sa" },
+  { emoji:"🏠", partial:"ca",     blanks:2, answer:"sa" },
+];
+function buildGrid() {
+  const g = document.getElementById('grid');
+  g.innerHTML = '';
+  items.forEach((it, idx) => {
+    const cell = document.createElement('div');
+    if (it.type === 'center') {
+      cell.className = 'pw-cell center-cell';
+      cell.innerHTML = `<span class="hint-tag center">${it.label}</span><span style="font-size:12px;color:#1d4ed8">sílaba del mes</span>`;
+    } else {
+      cell.className = 'pw-cell';
+      let boxes = '';
+      for (let i=0;i<it.blanks;i++) boxes += `<input class="pw-box" maxlength="1" id="b${idx}_${i}" oninput="advance(this,${idx},${i},${it.blanks})" data-idx="${idx}" data-pos="${i}">`;
+      cell.innerHTML = `<span class="pw-emoji">${it.emoji}</span>
+        <div class="pw-word"><span class="pw-fixed">${it.partial}</span>${boxes}</div>`;
+    }
+    g.appendChild(cell);
+  });
+}
+function advance(el, idx, pos, total) {
+  el.classList.remove('ok','err');
+  if (el.value.length === 1 && pos < total-1) {
+    const next = document.getElementById(`b${idx}_${pos+1}`);
+    if (next) next.focus();
+  }
+}
+function checkAll() {
+  let correct = 0, total = 0;
+  items.forEach((it, idx) => {
+    if (it.type === 'center') return;
+    for (let i=0;i<it.blanks;i++) {
+      const el = document.getElementById(`b${idx}_${i}`);
+      const expected = it.answer[i].toLowerCase();
+      el.classList.remove('ok','err');
+      if (el.value.toLowerCase() === expected) { el.classList.add('ok'); correct++; }
+      else { el.classList.add('err'); }
+      total++;
+    }
+  });
+  const msg = document.getElementById('resultMsg');
+  if (correct === total) msg.innerHTML = `<span class="ok-msg">✅ ¡Perfecto! Todas correctas.</span>`;
+  else msg.innerHTML = `<span class="err-msg">❌ ${correct} de ${total} correctas. Los cuadros rojos necesitan corrección.</span>`;
+}
+function restartAct() {
+  buildGrid(); document.getElementById('resultMsg').innerHTML = '';
+}
+buildGrid();
+</script>

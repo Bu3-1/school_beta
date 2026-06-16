@@ -1,0 +1,129 @@
+
+<style>
+  .vl-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .vl-header { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .vl-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .section-title { font-size: 15px; font-weight: 500; color: #6366f1; background: #eef2ff; border-radius: 8px; padding: 6px 14px; margin-bottom: 0.75rem; display: inline-block; }
+  .part-block { margin-bottom: 2rem; }
+  .letter-soup { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin-bottom: 0.5rem; }
+  .ls-cell { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 17px; border-radius: 8px; border: 1.5px solid var(--color-border-tertiary); background: var(--color-background-primary); cursor: pointer; user-select: none; color: var(--color-text-primary); transition: background 0.15s, border-color 0.15s; }
+  .ls-cell.vowel { color: #6366f1; font-weight: 500; }
+  .ls-cell.found { background: #dcfce7; border-color: #22c55e; color: #15803d; font-weight: 500; }
+  .ls-cell.wrong-tap { background: #fee2e2; border-color: #ef4444; }
+  .vowel-ref { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .vref-card { background: var(--color-background-secondary); border: 1.5px solid var(--color-border-secondary); border-radius: 10px; padding: 8px 16px; font-size: 22px; font-weight: 500; color: #6366f1; min-width: 44px; text-align: center; }
+  .trace-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 0.5rem; }
+  .trace-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 12px; padding: 10px 6px; }
+  .trace-emoji { font-size: 30px; }
+  .trace-letter { font-size: 28px; color: #d1d5db; font-weight: 500; }
+  .trace-input { width: 36px; height: 36px; border: none; border-bottom: 2.5px solid #6366f1; background: transparent; text-align: center; font-size: 22px; font-weight: 500; color: #6366f1; outline: none; }
+  .trace-input.ok { border-color: #22c55e; color: #15803d; }
+  .trace-input.err { border-color: #ef4444; color: #b91c1c; }
+  .check-btn { background: #6366f1; color: #fff; border: none; border-radius: 10px; padding: 9px 24px; font-size: 15px; font-weight: 500; cursor: pointer; }
+  .check-btn:hover { background: #4f46e5; }
+  .restart-btn { background: transparent; border: 1.5px solid #6366f1; color: #6366f1; border-radius: 10px; padding: 7px 18px; font-size: 13px; cursor: pointer; margin-left: 8px; }
+  .result-msg { margin-top: 0.75rem; font-size: 15px; font-weight: 500; min-height: 22px; }
+  .ok-msg { color: #15803d; } .err-msg { color: #b91c1c; }
+  .soup-score { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 6px; }
+</style>
+<div class="vl-wrap">
+  <div class="vl-header">🔤 Las Vocales</div>
+  <div class="vl-sub">Dos ejercicios para reconocer y escribir las vocales.</div>
+
+  <div class="part-block">
+    <div class="section-title">① Rodea las vocales que encuentres</div>
+    <div class="vowel-ref"><div class="vref-card">a</div><div class="vref-card">e</div><div class="vref-card">i</div><div class="vref-card">o</div><div class="vref-card">u</div></div>
+    <div class="soup-score" id="soupScore">Vocales encontradas: 0</div>
+    <div class="letter-soup" id="soupGrid"></div>
+  </div>
+
+  <div class="part-block">
+    <div class="section-title">② Escribe la vocal que falta en cada imagen</div>
+    <div class="trace-grid" id="traceGrid"></div>
+    <button class="check-btn" onclick="checkTrace()">Comprobar ✔</button>
+    <button class="restart-btn" onclick="restartAll()">🔄 Reiniciar</button>
+    <div class="result-msg" id="traceResult"></div>
+  </div>
+</div>
+<script>
+const VOWELS = new Set(['a','e','i','o','u']);
+const soupLetters = [
+  'a','d','r','ñ','s','o','f','y','e','c',
+  'w','s','p','h','o','f','y','e','c','g',
+  'o','t','r','a','ñ','s','z','m','i','l',
+  'b','e','j','y','u','e','c','g','i','l',
+  'a','d','r','ñ','s','m','n','w','o','b',
+  'q','o','i','h','f','y','e','a','m','n',
+  'j','u','e','c','g','i','l','k','o','z'
+];
+let soupFound = new Set();
+
+function buildSoup() {
+  const g = document.getElementById('soupGrid');
+  g.innerHTML = '';
+  soupFound = new Set();
+  updateSoupScore();
+  soupLetters.forEach((ch, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'ls-cell' + (VOWELS.has(ch) ? ' vowel' : '');
+    cell.textContent = ch;
+    cell.dataset.idx = i;
+    cell.onclick = () => tapSoup(cell, ch, i);
+    g.appendChild(cell);
+  });
+}
+
+function tapSoup(cell, ch, i) {
+  if (cell.classList.contains('found')) return;
+  if (VOWELS.has(ch)) {
+    cell.classList.add('found');
+    soupFound.add(i);
+    updateSoupScore();
+  } else {
+    cell.classList.add('wrong-tap');
+    setTimeout(() => cell.classList.remove('wrong-tap'), 600);
+  }
+}
+
+function updateSoupScore() {
+  const total = soupLetters.filter(c => VOWELS.has(c)).length;
+  document.getElementById('soupScore').textContent = `Vocales encontradas: ${soupFound.size} de ${total}`;
+}
+
+const traceItems = [
+  { emoji:'🍎', answer:'a' },
+  { emoji:'🐘', answer:'e' },
+  { emoji:'🦷', answer:'i' },
+  { emoji:'🌊', answer:'o' },
+  { emoji:'🍇', answer:'u' },
+];
+
+function buildTrace() {
+  const g = document.getElementById('traceGrid');
+  g.innerHTML = '';
+  traceItems.forEach((it, i) => {
+    g.innerHTML += `<div class="trace-cell">
+      <span class="trace-emoji">${it.emoji}</span>
+      <span class="trace-letter">${it.answer}</span>
+      <input class="trace-input" id="tr${i}" maxlength="1" placeholder="_">
+    </div>`;
+  });
+  document.getElementById('traceResult').innerHTML = '';
+}
+
+function checkTrace() {
+  let ok = 0;
+  traceItems.forEach((it, i) => {
+    const el = document.getElementById('tr'+i);
+    el.classList.remove('ok','err');
+    if (el.value.toLowerCase() === it.answer) { el.classList.add('ok'); ok++; }
+    else el.classList.add('err');
+  });
+  const msg = document.getElementById('traceResult');
+  if (ok === traceItems.length) msg.innerHTML = '<span class="ok-msg">✅ ¡Excelente! Todas correctas.</span>';
+  else msg.innerHTML = `<span class="err-msg">❌ ${ok} de ${traceItems.length} correctas.</span>`;
+}
+
+function restartAll() { buildSoup(); buildTrace(); }
+buildSoup(); buildTrace();
+</script>

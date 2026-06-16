@@ -1,0 +1,164 @@
+
+<style>
+  .sl-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .sl-header { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .sl-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .sec-label { font-size: 15px; font-weight: 500; color: #0369a1; background: #e0f2fe; border-radius: 8px; padding: 6px 14px; margin-bottom: 0.75rem; margin-top: 1.5rem; display: inline-block; }
+  .match-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .match-col { display: flex; flex-direction: column; gap: 8px; }
+  .match-item { background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 10px; padding: 9px 14px; font-size: 17px; cursor: pointer; user-select: none; transition: background 0.15s, border-color 0.15s; display: flex; align-items: center; gap: 8px; }
+  .match-item:hover { background: var(--color-background-secondary); }
+  .match-item.selected { border-color: #0284c7; background: #e0f2fe; }
+  .match-item.correct { border-color: #22c55e; background: #dcfce7; pointer-events: none; }
+  .match-item.wrong { border-color: #ef4444; background: #fee2e2; }
+  .match-emoji { font-size: 26px; }
+  .sil-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+  .sil-table th { background: #0284c7; color: #fff; padding: 8px 12px; font-size: 15px; font-weight: 500; text-align: center; }
+  .sil-table td { border: 1px solid var(--color-border-secondary); padding: 8px 10px; text-align: center; font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .sil-table tr:nth-child(even) td { background: var(--color-background-secondary); }
+  .sil-table td.vowel-row { color: #dc2626; }
+  .read-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .read-card { background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .read-emoji { font-size: 38px; }
+  .syl-opts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .syl-opt { background: #f0f9ff; border: 1.5px solid #7dd3fc; border-radius: 8px; padding: 5px 12px; font-size: 16px; font-weight: 500; color: #0369a1; cursor: pointer; transition: background 0.15s; }
+  .syl-opt:hover { background: #bae6fd; }
+  .syl-opt.chosen.correct { background: #dcfce7; border-color: #22c55e; color: #15803d; pointer-events: none; }
+  .syl-opt.chosen.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+  .syl-opt.disabled { pointer-events: none; opacity: 0.5; }
+  .read-answer { font-size: 13px; color: var(--color-text-secondary); min-height: 16px; }
+  .result-msg { margin-top: 0.75rem; font-size: 15px; font-weight: 500; min-height: 22px; }
+  .ok-msg { color: #15803d; } .err-msg { color: #b91c1c; }
+  .restart-btn { background: transparent; border: 1.5px solid #0369a1; color: #0369a1; border-radius: 10px; padding: 7px 18px; font-size: 13px; cursor: pointer; margin-top: 8px; }
+  .connector-line { font-size: 20px; color: var(--color-text-secondary); align-self: center; text-align: center; }
+</style>
+<div class="sl-wrap">
+  <div class="sl-header">📖 Lectura silábica</div>
+  <div class="sl-sub">Practica reconocer y leer sílabas con dos ejercicios.</div>
+
+  <div class="sec-label">① Une la imagen con su sílaba inicial</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px;">Toca una imagen y luego toca la sílaba que corresponde.</div>
+  <div class="match-row">
+    <div class="match-col" id="matchLeft"></div>
+    <div class="match-col" id="matchRight"></div>
+  </div>
+  <div class="result-msg" id="matchMsg"></div>
+
+  <div class="sec-label">② ¿Cuál sílaba tiene la imagen?</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px;">Toca la sílaba correcta para cada imagen.</div>
+  <div class="read-cards" id="readCards"></div>
+  <div class="result-msg" id="readMsg"></div>
+  <button class="restart-btn" onclick="restartAll()">🔄 Reiniciar todo</button>
+</div>
+<script>
+const matchData = [
+  { emoji:'🌸', word:'rosa', syl:'ro' },
+  { emoji:'🍋', word:'limón', syl:'li' },
+  { emoji:'🐸', word:'rana', syl:'ra' },
+  { emoji:'🎺', word:'tuba', syl:'tu' },
+  { emoji:'🌵', word:'cactus', syl:'ca' },
+  { emoji:'🐻', word:'oso', syl:'o' },
+];
+const readData = [
+  { emoji:'🐮', correct:'va', options:['va','so','pi','la'] },
+  { emoji:'🍌', correct:'pla', options:['ma','pla','ro','te'] },
+  { emoji:'🎸', correct:'gui', options:['bo','sa','gui','no'] },
+  { emoji:'🌞', correct:'sol', options:['pol','sol','pal','mal'] },
+];
+
+let matchSelLeft = null;
+let matchDone = new Set();
+let matchScore = 0;
+const shuffled = [...matchData].sort(()=>Math.random()-0.5);
+
+function buildMatch() {
+  matchSelLeft = null; matchDone = new Set(); matchScore = 0;
+  document.getElementById('matchMsg').innerHTML = '';
+  const leftItems = [...matchData].sort(()=>Math.random()-0.5);
+  const rightItems = [...matchData].sort(()=>Math.random()-0.5);
+  const L = document.getElementById('matchLeft');
+  const R = document.getElementById('matchRight');
+  L.innerHTML = '';
+  R.innerHTML = '';
+  leftItems.forEach(it => {
+    const d = document.createElement('div');
+    d.className = 'match-item';
+    d.dataset.syl = it.syl;
+    d.dataset.side = 'left';
+    d.innerHTML = `<span class="match-emoji">${it.emoji}</span> ${it.word}`;
+    d.onclick = () => selectLeft(d, it.syl);
+    L.appendChild(d);
+  });
+  rightItems.forEach(it => {
+    const d = document.createElement('div');
+    d.className = 'match-item';
+    d.dataset.syl = it.syl;
+    d.dataset.side = 'right';
+    d.textContent = it.syl;
+    d.onclick = () => selectRight(d, it.syl);
+    R.appendChild(d);
+  });
+}
+
+function selectLeft(el, syl) {
+  if (el.classList.contains('correct')) return;
+  document.querySelectorAll('.match-item[data-side="left"]').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  matchSelLeft = { el, syl };
+}
+
+function selectRight(el, syl) {
+  if (el.classList.contains('correct') || !matchSelLeft) return;
+  if (matchSelLeft.syl === syl) {
+    el.classList.add('correct');
+    matchSelLeft.el.classList.remove('selected');
+    matchSelLeft.el.classList.add('correct');
+    matchScore++;
+    if (matchScore === matchData.length) {
+      document.getElementById('matchMsg').innerHTML = '<span class="ok-msg">✅ ¡Emparejaste todo correctamente!</span>';
+    }
+  } else {
+    el.classList.add('wrong');
+    matchSelLeft.el.classList.add('wrong');
+    setTimeout(() => {
+      el.classList.remove('wrong');
+      matchSelLeft.el.classList.remove('wrong','selected');
+      matchSelLeft = null;
+    }, 700);
+    return;
+  }
+  matchSelLeft = null;
+}
+
+function buildRead() {
+  document.getElementById('readMsg').innerHTML = '';
+  const g = document.getElementById('readCards');
+  g.innerHTML = '';
+  readData.forEach((it, i) => {
+    const opts = [...it.options].sort(()=>Math.random()-0.5);
+    const btns = opts.map(o => `<button class="syl-opt" id="ro${i}_${o}" onclick="pickSyl(${i},'${o}','${it.correct}')">${o}</button>`).join('');
+    g.innerHTML += `<div class="read-card">
+      <span class="read-emoji">${it.emoji}</span>
+      <div class="syl-opts">${btns}</div>
+      <div class="read-answer" id="ra${i}"></div>
+    </div>`;
+  });
+}
+
+function pickSyl(i, chosen, correct) {
+  readData[i].options.forEach(o => {
+    const el = document.getElementById(`ro${i}_${o}`);
+    if (el) el.classList.add('disabled');
+  });
+  const el = document.getElementById(`ro${i}_${chosen}`);
+  el.classList.add('chosen', chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) {
+    const cor = document.getElementById(`ro${i}_${correct}`);
+    if (cor) { cor.classList.remove('disabled'); cor.classList.add('chosen','correct'); }
+  }
+  document.getElementById(`ra${i}`).textContent = chosen === correct ? '✅ ¡Correcto!' : `❌ Era: ${correct}`;
+}
+
+function restartAll() { buildMatch(); buildRead(); }
+buildMatch(); buildRead();
+</script>

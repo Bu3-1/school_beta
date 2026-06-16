@@ -1,0 +1,187 @@
+
+<style>
+  body{margin:0}
+  .w{font-family:var(--font-sans);max-width:640px;margin:0 auto;padding:1rem 0 2rem}
+  .hdr{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+  .sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+  .tag{font-size:13px;font-weight:500;background:#fef3c7;color:#92400e;border-radius:6px;padding:3px 10px;display:inline-block;margin-bottom:1rem}
+  .sec{font-size:15px;font-weight:500;color:#b45309;background:#fef9c3;border-radius:8px;padding:6px 14px;margin:1.25rem 0 0.75rem;display:inline-block}
+  /* Part 1 – complete letters */
+  .word-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:0.5rem}
+  .wcard{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .wemoji{font-size:40px;line-height:1}
+  .wword{display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:center;font-size:15px}
+  .wfixed{font-size:16px;font-weight:500;letter-spacing:.5px}
+  .wbox{width:18px;height:26px;border:none;border-bottom:2.5px solid #d97706;background:transparent;text-align:center;font-size:16px;font-weight:500;color:#b45309;outline:none;padding:0}
+  .wbox.ok{border-color:#22c55e;color:#15803d}
+  .wbox.err{border-color:#ef4444;color:#b91c1c}
+  /* Part 2 – syllable sort */
+  .sort-row{display:flex;align-items:center;gap:8px;background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:12px;padding:10px 14px;margin-bottom:8px;flex-wrap:wrap}
+  .syl-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .syl-chip{background:#fef3c7;border:1.5px solid #fbbf24;border-radius:8px;padding:4px 10px;font-size:16px;font-weight:500;color:#92400e;cursor:pointer;user-select:none;transition:background .15s}
+  .syl-chip:hover{background:#fde68a}
+  .syl-chip.used{opacity:.35;pointer-events:none}
+  .syl-chip.sel{outline:2px solid #d97706}
+  .slot-row{display:flex;gap:6px;flex-wrap:wrap}
+  .sslot{min-width:38px;height:32px;border:2px dashed #fbbf24;border-radius:8px;background:#fffbeb;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;color:#b45309;cursor:pointer;padding:0 5px;transition:background .15s}
+  .sslot.filled{border-style:solid;border-color:#d97706;background:#fef3c7}
+  .sslot.correct{border-color:#22c55e;background:#dcfce7;color:#15803d}
+  .sslot.wrong{border-color:#ef4444;background:#fee2e2;color:#b91c1c}
+  .arrow{font-size:18px;color:var(--color-text-secondary)}
+  /* Part 3 – copy sentence */
+  .copy-block{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .model-sent{font-size:17px;font-weight:500;color:#92400e;margin-bottom:8px;letter-spacing:.3px}
+  .copy-input{width:100%;box-sizing:border-box;font-size:16px;border:1.5px solid var(--color-border-secondary);border-radius:8px;padding:7px 10px;outline:none;background:var(--color-background-secondary);color:var(--color-text-primary)}
+  .copy-input.ok{border-color:#22c55e}
+  .copy-input.err{border-color:#ef4444}
+  .copy-fb{font-size:13px;margin-top:4px;min-height:16px}
+  .check-btn{background:#d97706;color:#fff;border:none;border-radius:10px;padding:9px 24px;font-size:15px;font-weight:500;cursor:pointer;margin-top:1rem}
+  .check-btn:hover{background:#b45309}
+  .restart-btn{background:transparent;border:1.5px solid #d97706;color:#b45309;border-radius:10px;padding:7px 18px;font-size:13px;cursor:pointer;margin-left:8px}
+  .res{margin-top:8px;font-size:15px;font-weight:500;min-height:20px}
+  .ok-m{color:#15803d}.err-m{color:#b91c1c}
+</style>
+<div class="w">
+  <div class="hdr">✏️ Escritura silábico-alfabética</div>
+  <div class="sub">Ejercicios donde algunas letras ya están y otras las debes completar tú.</div>
+  <div class="tag">📌 Nivel: Silábico-alfabético</div>
+
+  <div class="sec">① Completa las letras que faltan</div>
+  <div class="word-grid" id="wgrid"></div>
+
+  <div class="sec">② Ordena las sílabas para formar la palabra</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px">Toca una sílaba y luego el cuadro donde va.</div>
+  <div id="sortRows"></div>
+
+  <div class="sec">③ Copia la oración completa</div>
+  <div id="copyRows"></div>
+
+  <button class="check-btn" onclick="checkAll()">Comprobar todo ✔</button>
+  <button class="restart-btn" onclick="restart()">🔄 Reiniciar</button>
+  <div class="res" id="res"></div>
+</div>
+<script>
+// Part 1
+const wordItems=[
+  {emoji:"🦜",partial:"pe_o_ic_",answer:"lrt"},
+  {emoji:"🍇",partial:"u_as",answer:"v"},
+  {emoji:"🌺",partial:"_lor",answer:"f"},
+  {emoji:"🐘",partial:"e_ef_nte",answer:"la"},
+  {emoji:"🧲",partial:"im_n",answer:"á"},
+  {emoji:"🎻",partial:"vi_lín",answer:"o"},
+];
+function buildW(){
+  const g=document.getElementById('wgrid');g.innerHTML='';
+  wordItems.forEach((it,wi)=>{
+    let html='',bi=0;
+    for(let i=0;i<it.partial.length;i++){
+      if(it.partial[i]==='_'){
+        html+=`<input class="wbox" maxlength="1" id="wb${wi}_${bi}" data-wi="${wi}" data-bi="${bi}">`;bi++;
+      } else html+=`<span class="wfixed">${it.partial[i]}</span>`;
+    }
+    g.innerHTML+=`<div class="wcard"><span class="wemoji">${it.emoji}</span><div class="wword">${html}</div></div>`;
+  });
+}
+function checkW(){
+  let ok=0,total=0;
+  wordItems.forEach((it,wi)=>{
+    for(let bi=0;bi<it.answer.length;bi++){
+      const el=document.getElementById(`wb${wi}_${bi}`);if(!el)continue;
+      el.classList.remove('ok','err');total++;
+      if(el.value.toLowerCase()===it.answer[bi].toLowerCase()){el.classList.add('ok');ok++;}
+      else el.classList.add('err');
+    }
+  });
+  return{ok,total};
+}
+
+// Part 2
+const sortWords=[
+  {emoji:"🌸",syls:["flo","ri","da"],answer:"florida"},
+  {emoji:"🐬",syls:["del","fín","dol"],answer:"dolfín"},
+  {emoji:"🎈",syls:["glo","bo"],answer:"globo"},
+];
+let selSyl=null,placedSort={};
+function buildSort(){
+  selSyl=null;placedSort={};
+  const all=sortWords.flatMap(w=>[...w.syls]).sort(()=>Math.random()-.5);
+  // pool
+  let poolHtml='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="sylPool">';
+  all.forEach((s,i)=>poolHtml+=`<div class="syl-chip" id="sc${i}" data-s="${s}" data-i="${i}" onclick="selChip(this)">${s}</div>`);
+  poolHtml+='</div>';
+  let rows='';
+  sortWords.forEach((w,wi)=>{
+    let slots='';
+    w.syls.forEach((_,si)=>slots+=`<div class="sslot" id="ss${wi}_${si}" onclick="placeSort(${wi},${si})">${si+1}</div>`);
+    rows+=`<div class="sort-row"><span style="font-size:28px">${w.emoji}</span><span class="arrow">→</span><div class="slot-row">${slots}</div></div>`;
+  });
+  document.getElementById('sortRows').innerHTML=poolHtml+rows;
+}
+function selChip(el){
+  if(el.classList.contains('used'))return;
+  document.querySelectorAll('.syl-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');selSyl={s:el.dataset.s,i:el.dataset.i,el};
+}
+function placeSort(wi,si){
+  if(!selSyl)return;
+  const prev=placedSort[`${wi}_${si}`];
+  if(prev){const pc=document.querySelector(`.syl-chip[data-i="${prev.i}"]`);if(pc){pc.classList.remove('used');}}
+  placedSort[`${wi}_${si}`]={s:selSyl.s,i:selSyl.i};
+  const slot=document.getElementById(`ss${wi}_${si}`);
+  slot.textContent=selSyl.s;slot.classList.add('filled');slot.classList.remove('correct','wrong');
+  selSyl.el.classList.add('used');selSyl.el.classList.remove('sel');selSyl=null;
+}
+function checkSort(){
+  let ok=0,total=0;
+  sortWords.forEach((w,wi)=>{
+    const correct=w.syls;
+    correct.forEach((syl,si)=>{
+      total++;
+      const slot=document.getElementById(`ss${wi}_${si}`);
+      slot.classList.remove('correct','wrong');
+      const p=placedSort[`${wi}_${si}`];
+      if(p&&p.s===syl){slot.classList.add('correct');ok++;}
+      else slot.classList.add('wrong');
+    });
+  });
+  return{ok,total};
+}
+
+// Part 3
+const copyItems=[
+  {model:"Mi mamá me mima.",id:"c0"},
+  {model:"El sol sale.",id:"c1"},
+  {model:"Amo a mi familia.",id:"c2"},
+];
+function buildCopy(){
+  const g=document.getElementById('copyRows');g.innerHTML='';
+  copyItems.forEach(it=>{
+    g.innerHTML+=`<div class="copy-block">
+      <div class="model-sent">${it.model}</div>
+      <input class="copy-input" id="${it.id}" placeholder="Escribe la oración aquí...">
+      <div class="copy-fb" id="fb_${it.id}"></div>
+    </div>`;
+  });
+}
+function checkCopy(){
+  let ok=0;
+  copyItems.forEach(it=>{
+    const el=document.getElementById(it.id);
+    el.classList.remove('ok','err');
+    const fb=document.getElementById('fb_'+it.id);
+    if(el.value.trim()===it.model){el.classList.add('ok');fb.innerHTML='<span style="color:#15803d">✅ ¡Correcto!</span>';ok++;}
+    else{el.classList.add('err');fb.innerHTML='<span style="color:#b91c1c">❌ Revisa mayúsculas, espacios y punto.</span>';}
+  });
+  return{ok,total:copyItems.length};
+}
+
+function checkAll(){
+  const r1=checkW(),r2=checkSort(),r3=checkCopy();
+  const ok=r1.ok+r2.ok+r3.ok,total=r1.total+r2.total+r3.total;
+  const msg=document.getElementById('res');
+  if(ok===total)msg.innerHTML='<span class="ok-m">✅ ¡Perfecto! Todo correcto.</span>';
+  else msg.innerHTML=`<span class="err-m">❌ ${ok} de ${total} correctas. Revisa los rojos.</span>`;
+}
+function restart(){buildW();buildSort();buildCopy();document.getElementById('res').innerHTML='';}
+buildW();buildSort();buildCopy();
+</script>

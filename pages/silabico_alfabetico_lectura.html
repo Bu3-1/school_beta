@@ -1,0 +1,152 @@
+
+<style>
+  .w{font-family:var(--font-sans);max-width:640px;margin:0 auto;padding:1rem 0 2rem}
+  .hdr{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+  .sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+  .tag{font-size:13px;font-weight:500;background:#fef3c7;color:#92400e;border-radius:6px;padding:3px 10px;display:inline-block;margin-bottom:1rem}
+  .sec{font-size:15px;font-weight:500;color:#b45309;background:#fef9c3;border-radius:8px;padding:6px 14px;margin:1.25rem 0 0.75rem;display:inline-block}
+  /* Part 1 – word-image match */
+  .match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .match-col{display:flex;flex-direction:column;gap:8px}
+  .mitem{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:10px;padding:9px 14px;font-size:16px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;transition:background .15s}
+  .mitem:hover{background:var(--color-background-secondary)}
+  .mitem.sel{border-color:#d97706;background:#fef3c7}
+  .mitem.correct{border-color:#22c55e;background:#dcfce7;pointer-events:none}
+  .mitem.wrong{border-color:#ef4444;background:#fee2e2}
+  .mitem .mem{font-size:26px}
+  /* Part 2 – odd-one-out */
+  .group-block{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .group-q{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+  .opt-row{display:flex;gap:8px;flex-wrap:wrap}
+  .opt-pill{background:var(--color-background-secondary);border:1.5px solid var(--color-border-secondary);border-radius:8px;padding:7px 14px;font-size:15px;cursor:pointer;transition:background .15s;color:var(--color-text-primary)}
+  .opt-pill:hover{background:#fef3c7;border-color:#fbbf24}
+  .opt-pill.correct{background:#dcfce7;border-color:#22c55e;color:#15803d;pointer-events:none}
+  .opt-pill.wrong{background:#fee2e2;border-color:#ef4444;color:#b91c1c;pointer-events:none}
+  .opt-pill.dis{pointer-events:none;opacity:.5}
+  .gfb{font-size:13px;margin-top:6px;min-height:16px}
+  /* Part 3 – read and tick */
+  .tick-block{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .tick-sent{font-size:16px;font-weight:500;color:#92400e;margin-bottom:8px}
+  .tick-opts{display:flex;gap:10px;flex-wrap:wrap}
+  .tick-btn{background:var(--color-background-secondary);border:1.5px solid var(--color-border-secondary);border-radius:8px;padding:6px 16px;font-size:15px;cursor:pointer;transition:background .15s;color:var(--color-text-primary)}
+  .tick-btn:hover{background:#fef3c7;border-color:#fbbf24}
+  .tick-btn.correct{background:#dcfce7;border-color:#22c55e;color:#15803d;pointer-events:none}
+  .tick-btn.wrong{background:#fee2e2;border-color:#ef4444;color:#b91c1c;pointer-events:none}
+  .tick-btn.dis{pointer-events:none;opacity:.5}
+  .tfb{font-size:13px;margin-top:4px;min-height:16px}
+  .restart-btn{background:transparent;border:1.5px solid #d97706;color:#b45309;border-radius:10px;padding:7px 18px;font-size:13px;cursor:pointer;margin-top:1rem}
+  .res{margin-top:8px;font-size:15px;font-weight:500;min-height:20px}
+  .ok-m{color:#15803d}.err-m{color:#b91c1c}
+</style>
+<div class="w">
+  <div class="hdr">📖 Lectura silábico-alfabética</div>
+  <div class="sub">Lee las palabras completas y demuestra que las entiendes.</div>
+  <div class="tag">📌 Nivel: Silábico-alfabético</div>
+
+  <div class="sec">① Une la palabra con su imagen</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Toca una palabra y luego la imagen que le corresponde.</div>
+  <div class="match-wrap">
+    <div class="match-col" id="mLeft"></div>
+    <div class="match-col" id="mRight"></div>
+  </div>
+  <div class="res" id="mRes"></div>
+
+  <div class="sec">② ¿Cuál no pertenece al grupo?</div>
+  <div id="groupBlocks"></div>
+
+  <div class="sec">③ Lee la oración y elige la imagen correcta</div>
+  <div id="tickBlocks"></div>
+
+  <button class="restart-btn" onclick="restart()">🔄 Reiniciar todo</button>
+</div>
+<script>
+// Part 1
+const matchData=[
+  {word:"mariposa",emoji:"🦋",id:"mariposa"},
+  {word:"cocodrilo",emoji:"🐊",id:"cocodrilo"},
+  {word:"fresa",emoji:"🍓",id:"fresa"},
+  {word:"telescopio",emoji:"🔭",id:"telescopio"},
+  {word:"trompeta",emoji:"🎺",id:"trompeta"},
+  {word:"cigüeña",emoji:"🦢",id:"cigüeña"},
+];
+let mSelLeft=null,mDone=new Set(),mScore=0;
+function buildMatch(){
+  mSelLeft=null;mDone=new Set();mScore=0;
+  document.getElementById('mRes').innerHTML='';
+  const lArr=[...matchData].sort(()=>Math.random()-.5);
+  const rArr=[...matchData].sort(()=>Math.random()-.5);
+  const L=document.getElementById('mLeft'),R=document.getElementById('mRight');
+  L.innerHTML='';R.innerHTML='';
+  lArr.forEach(it=>{
+    const d=document.createElement('div');d.className='mitem';d.dataset.id=it.id;d.dataset.side='L';
+    d.innerHTML=`<span style="font-size:16px;font-weight:500">${it.word}</span>`;
+    d.onclick=()=>selLeft(d,it.id);L.appendChild(d);
+  });
+  rArr.forEach(it=>{
+    const d=document.createElement('div');d.className='mitem';d.dataset.id=it.id;d.dataset.side='R';
+    d.innerHTML=`<span class="mem">${it.emoji}</span>`;
+    d.onclick=()=>selRight(d,it.id);R.appendChild(d);
+  });
+}
+function selLeft(el,id){
+  if(el.classList.contains('correct'))return;
+  document.querySelectorAll('.mitem[data-side="L"]').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');mSelLeft={el,id};
+}
+function selRight(el,id){
+  if(el.classList.contains('correct')||!mSelLeft)return;
+  if(mSelLeft.id===id){
+    el.classList.add('correct');mSelLeft.el.classList.remove('sel');mSelLeft.el.classList.add('correct');
+    mScore++;if(mScore===matchData.length)document.getElementById('mRes').innerHTML='<span class="ok-m">✅ ¡Todas emparejadas!</span>';
+  } else {
+    el.classList.add('wrong');mSelLeft.el.classList.add('wrong');
+    setTimeout(()=>{el.classList.remove('wrong');mSelLeft.el.classList.remove('wrong','sel');mSelLeft=null;},700);return;
+  }
+  mSelLeft=null;
+}
+
+// Part 2
+const groups=[
+  {q:"¿Cuál NO es un animal?",opts:["perro","mesa","gato","pez"],wrong:"mesa"},
+  {q:"¿Cuál NO es una fruta?",opts:["mango","sandía","zapato","uva"],wrong:"zapato"},
+  {q:"¿Cuál NO empieza con 'p'?",opts:["pato","pino","luna","perro"],wrong:"luna"},
+];
+function buildGroups(){
+  const g=document.getElementById('groupBlocks');g.innerHTML='';
+  groups.forEach((gr,i)=>{
+    const opts=gr.opts.map(o=>`<div class="opt-pill" id="gp${i}_${o}" onclick="pickGroup(${i},'${o}','${gr.wrong}')">${o}</div>`).join('');
+    g.innerHTML+=`<div class="group-block"><div class="group-q">${gr.q}</div><div class="opt-row">${opts}</div><div class="gfb" id="gfb${i}"></div></div>`;
+  });
+}
+function pickGroup(i,chosen,wrong){
+  groups[i].opts.forEach(o=>{const el=document.getElementById(`gp${i}_${o}`);if(el)el.classList.add('dis');});
+  const el=document.getElementById(`gp${i}_${chosen}`);
+  const fb=document.getElementById(`gfb${i}`);
+  if(chosen===wrong){el.classList.add('correct');fb.innerHTML='<span style="color:#15803d">✅ ¡Correcto! No pertenece.</span>';}
+  else{el.classList.add('wrong');fb.innerHTML=`<span style="color:#b91c1c">❌ La que no pertenece es: "${wrong}"</span>`;document.getElementById(`gp${i}_${wrong}`).classList.remove('dis');document.getElementById(`gp${i}_${wrong}`).classList.add('correct');}
+}
+
+// Part 3
+const tickItems=[
+  {sent:"La mamá carga una bolsa.",opts:[{e:"👜",id:"bolsa"},{e:"🎸",id:"guitarra"},{e:"🍕",id:"pizza"}],correct:"bolsa"},
+  {sent:"El niño juega con el balón.",opts:[{e:"🎵",id:"musica"},{e:"⚽",id:"balon"},{e:"🐟",id:"pez"}],correct:"balon"},
+  {sent:"La flor es de color rojo.",opts:[{e:"🌸",id:"flor"},{e:"🌵",id:"cactus"},{e:"🌊",id:"ola"}],correct:"flor"},
+];
+function buildTick(){
+  const g=document.getElementById('tickBlocks');g.innerHTML='';
+  tickItems.forEach((it,i)=>{
+    const btns=it.opts.map(o=>`<button class="tick-btn" id="tb${i}_${o.id}" onclick="pickTick(${i},'${o.id}','${it.correct}')">${o.e}</button>`).join('');
+    g.innerHTML+=`<div class="tick-block"><div class="tick-sent">${it.sent}</div><div class="tick-opts">${btns}</div><div class="tfb" id="tfb${i}"></div></div>`;
+  });
+}
+function pickTick(i,chosen,correct){
+  tickItems[i].opts.forEach(o=>{const el=document.getElementById(`tb${i}_${o.id}`);if(el)el.classList.add('dis');});
+  const el=document.getElementById(`tb${i}_${chosen}`);
+  const fb=document.getElementById(`tfb${i}`);
+  if(chosen===correct){el.classList.add('correct');fb.innerHTML='<span style="color:#15803d">✅ ¡Correcto!</span>';}
+  else{el.classList.add('wrong');fb.innerHTML='<span style="color:#b91c1c">❌ Vuelve a leer la oración.</span>';document.getElementById(`tb${i}_${correct}`).classList.remove('dis');document.getElementById(`tb${i}_${correct}`).classList.add('correct');}
+}
+
+function restart(){buildMatch();buildGroups();buildTick();}
+buildMatch();buildGroups();buildTick();
+</script>

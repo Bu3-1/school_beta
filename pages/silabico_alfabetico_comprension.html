@@ -1,0 +1,109 @@
+
+<style>
+  .w{font-family:var(--font-sans);max-width:640px;margin:0 auto;padding:1rem 0 2rem}
+  .hdr{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+  .sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+  .tag{font-size:13px;font-weight:500;background:#fef3c7;color:#92400e;border-radius:6px;padding:3px 10px;display:inline-block;margin-bottom:1rem}
+  .story-card{background:#fffbeb;border:2px solid #fbbf24;border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.25rem}
+  .story-title{font-size:17px;font-weight:500;color:#92400e;margin-bottom:.75rem}
+  .story-body{font-size:16px;line-height:2;color:var(--color-text-primary)}
+  .prog-bar{background:var(--color-border-tertiary);border-radius:8px;height:8px;margin-bottom:1.25rem;overflow:hidden}
+  .prog-fill{background:#f59e0b;height:100%;border-radius:8px;transition:width .4s}
+  .q-block{background:var(--color-background-primary);border:1px solid var(--color-border-secondary);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+  .q-num{font-size:13px;color:var(--color-text-secondary);margin-bottom:4px}
+  .q-text{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .opt-btn{background:var(--color-background-secondary);border:1.5px solid var(--color-border-secondary);border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--color-text-primary);text-align:left;transition:background .15s}
+  .opt-btn:hover{background:#fef3c7;border-color:#fbbf24}
+  .opt-btn.correct{background:#dcfce7;border-color:#22c55e;color:#15803d;pointer-events:none}
+  .opt-btn.wrong{background:#fee2e2;border-color:#ef4444;color:#b91c1c;pointer-events:none}
+  .opt-btn.dis{pointer-events:none}
+  /* open question */
+  .open-input{width:100%;box-sizing:border-box;font-size:15px;border:1.5px solid var(--color-border-secondary);border-radius:8px;padding:7px 10px;outline:none;background:var(--color-background-secondary);color:var(--color-text-primary);margin-bottom:6px}
+  .open-input.ok{border-color:#22c55e}
+  .open-input.err{border-color:#ef4444}
+  .open-check{background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:14px;cursor:pointer}
+  .open-check:hover{background:#d97706}
+  .q-fb{font-size:13px;margin-top:6px;min-height:16px;font-weight:500}
+  .fb-ok{color:#15803d}.fb-no{color:#b91c1c}
+  .score-card{display:none;background:var(--color-background-primary);border:2px solid #f59e0b;border-radius:16px;padding:1.5rem;text-align:center;margin-top:1rem}
+  .score-card.vis{display:block}
+  .score-num{font-size:48px;font-weight:500;color:#d97706}
+  .score-msg{font-size:17px;color:var(--color-text-secondary);margin-top:.5rem}
+  .restart-btn{background:transparent;border:1.5px solid #f59e0b;color:#d97706;border-radius:10px;padding:8px 20px;font-size:14px;cursor:pointer;margin-top:1rem}
+</style>
+<div class="w">
+  <div class="hdr">📚 Comprensión silábico-alfabética</div>
+  <div class="sub">Lee con cuidado el texto y responde todas las preguntas.</div>
+  <div class="tag">📌 Nivel: Silábico-alfabético</div>
+
+  <div class="story-card">
+    <div class="story-title">🦊 La zorra y las uvas</div>
+    <div class="story-body">
+      Una zorra caminaba por el campo.<br>
+      De pronto vio un racimo de uvas en el árbol.<br>
+      Las uvas eran grandes, moradas y brillantes. 🍇<br>
+      La zorra saltó una y otra vez, pero no las alcanzó.<br>
+      Al final se fue y dijo: <em>"¡Seguro que están agrias!"</em><br>
+      La moraleja es: a veces despreciamos lo que no podemos tener. 🦊
+    </div>
+  </div>
+
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+  <div id="qArea"></div>
+  <div class="score-card" id="scoreCard">
+    <div class="score-num" id="sNum">0/6</div>
+    <div class="score-msg" id="sMsg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Intentar de nuevo</button>
+  </div>
+</div>
+<script>
+const qs=[
+  {type:"choice",q:"¿Qué animal es el personaje principal?",opts:[{e:"🐺",l:"Lobo"},{e:"🦊",l:"Zorra"},{e:"🐻",l:"Oso"},{e:"🦁",l:"León"}],c:1},
+  {type:"choice",q:"¿Qué encontró la zorra?",opts:[{e:"🍎",l:"Manzanas"},{e:"🥕",l:"Zanahorias"},{e:"🍇",l:"Uvas"},{e:"🍋",l:"Limones"}],c:2},
+  {type:"choice",q:"¿Cómo eran las uvas?",opts:[{e:"🟡",l:"Pequeñas y verdes"},{e:"🟣",l:"Grandes y moradas"},{e:"🔴",l:"Rojas y duras"},{e:"⚪",l:"Blancas y secas"}],c:1},
+  {type:"choice",q:"¿Por qué la zorra no comió las uvas?",opts:[{e:"😴",l:"Tenía sueño"},{e:"🤢",l:"No le gustaban"},{e:"🚫",l:"No las alcanzó"},{e:"🌧️",l:"Llovió"}],c:2},
+  {type:"choice",q:"¿Qué dijo la zorra al final?",opts:[{e:"😍",l:"¡Qué ricas!"},{e:"😤",l:"¡Seguro que están agrias!"},{e:"😢",l:"¡Las quiero!"},{e:"😆",l:"¡Las traeré mañana!"}],c:1},
+  {type:"open",q:"¿Qué enseñanza nos da este cuento?",hint:"Escribe la moraleja con tus palabras...",keywords:["despreciamos","tener","podemos","agrias","querer"]},
+];
+let cur=0,score=0;
+function render(){
+  document.getElementById('pf').style.width=(cur/qs.length*100)+'%';
+  const area=document.getElementById('qArea');
+  if(cur>=qs.length){area.innerHTML='';showScore();return;}
+  const q=qs[cur];
+  if(q.type==='choice'){
+    const opts=q.opts.map((o,i)=>`<button class="opt-btn" id="ob${i}" onclick="pick(${i},${q.c})"><span>${o.e}</span>${o.l}</button>`).join('');
+    area.innerHTML=`<div class="q-block"><div class="q-num">Pregunta ${cur+1} de ${qs.length}</div><div class="q-text">${q.q}</div><div class="opt-grid">${opts}</div><div class="q-fb" id="qfb"></div></div>`;
+  } else {
+    area.innerHTML=`<div class="q-block"><div class="q-num">Pregunta ${cur+1} de ${qs.length}</div><div class="q-text">${q.q}</div><input class="open-input" id="openIn" placeholder="${q.hint}"><button class="open-check" onclick="checkOpen()">Verificar</button><div class="q-fb" id="qfb"></div></div>`;
+  }
+}
+function pick(idx,correct){
+  for(let i=0;i<4;i++){const b=document.getElementById('ob'+i);if(b)b.classList.add('dis');}
+  const fb=document.getElementById('qfb');
+  if(idx===correct){document.getElementById('ob'+idx).classList.add('correct');fb.innerHTML='<span class="fb-ok">✅ ¡Muy bien!</span>';score++;}
+  else{document.getElementById('ob'+idx).classList.add('wrong');document.getElementById('ob'+correct).classList.add('correct');fb.innerHTML='<span class="fb-no">❌ La respuesta correcta está marcada.</span>';}
+  setTimeout(()=>{cur++;render();},1600);
+}
+function checkOpen(){
+  const val=document.getElementById('openIn').value.toLowerCase();
+  const q=qs[cur];
+  const ok=q.keywords.some(k=>val.includes(k));
+  const fb=document.getElementById('qfb');
+  document.getElementById('openIn').classList.add(ok?'ok':'err');
+  if(ok){fb.innerHTML='<span class="fb-ok">✅ ¡Buena respuesta! Entendiste la moraleja.</span>';score++;}
+  else{fb.innerHTML='<span class="fb-no">❌ Intenta mencionar qué pasa cuando no podemos conseguir algo.</span>';}
+  document.querySelector('.open-check').disabled=true;
+  setTimeout(()=>{cur++;render();},2000);
+}
+function showScore(){
+  document.getElementById('pf').style.width='100%';
+  const card=document.getElementById('scoreCard');card.classList.add('vis');
+  document.getElementById('sNum').textContent=score+' / '+qs.length;
+  const msgs=["¡Sigue leyendo! 💪","¡Casi! Lee de nuevo el cuento 📖","¡Bien! Vas progresando 🌟","¡Muy bien! Casi perfecto 🎉","¡Excelente lectora/or! 🏆","¡Perfecto! Todo correcto 🥇"];
+  document.getElementById('sMsg').textContent=msgs[Math.min(score,msgs.length-1)];
+}
+function restart(){cur=0;score=0;document.getElementById('scoreCard').classList.remove('vis');render();}
+render();
+</script>

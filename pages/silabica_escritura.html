@@ -1,0 +1,169 @@
+
+<style>
+  .se-wrap { font-family: var(--font-sans); max-width: 640px; margin: 0 auto; padding: 1rem 0 2rem; }
+  .se-header { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .se-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.25rem; }
+  .sec-label { font-size: 15px; font-weight: 500; color: #6366f1; background: #eef2ff; border-radius: 8px; padding: 6px 14px; margin-bottom: 0.75rem; margin-top: 1.5rem; display: inline-block; }
+  .sil-pool { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .sil-chip { background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 8px; padding: 6px 14px; font-size: 18px; font-weight: 500; color: #1d4ed8; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .sil-chip:hover { background: #dbeafe; }
+  .sil-chip.used { opacity: 0.35; pointer-events: none; }
+  .word-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .word-cell { background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .word-emoji { font-size: 36px; }
+  .word-slots { display: flex; gap: 4px; align-items: center; }
+  .sil-slot { min-width: 42px; height: 34px; border: 2px dashed #a5b4fc; border-radius: 8px; background: #f5f3ff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; color: #6366f1; cursor: pointer; padding: 0 6px; transition: background 0.15s; }
+  .sil-slot.filled { border-style: solid; border-color: #6366f1; background: #eef2ff; }
+  .sil-slot.correct { border-color: #22c55e; background: #dcfce7; color: #15803d; }
+  .sil-slot.wrong { border-color: #ef4444; background: #fee2e2; color: #b91c1c; }
+  .word-hint { font-size: 12px; color: var(--color-text-secondary); }
+  .sep2 { display: flex; flex-direction: column; gap: 8px; }
+  .join-row { display: flex; align-items: center; gap: 8px; background: var(--color-background-primary); border: 1.5px solid var(--color-border-secondary); border-radius: 12px; padding: 10px 14px; }
+  .join-chips { display: flex; gap: 6px; }
+  .join-chip { background: #eff6ff; border: 1.5px solid #60a5fa; border-radius: 8px; padding: 4px 10px; font-size: 17px; font-weight: 500; color: #1d4ed8; }
+  .arrow-lbl { font-size: 18px; }
+  .join-result { font-size: 18px; font-weight: 500; color: #15803d; letter-spacing: 1px; }
+  .join-input { border: none; border-bottom: 2px solid #6366f1; background: transparent; font-size: 18px; font-weight: 500; color: #6366f1; outline: none; width: 100px; text-align: center; }
+  .join-input.ok { border-color: #22c55e; color: #15803d; }
+  .join-input.err { border-color: #ef4444; color: #b91c1c; }
+  .check-btn { background: #6366f1; color: #fff; border: none; border-radius: 10px; padding: 9px 24px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 1rem; }
+  .check-btn:hover { background: #4f46e5; }
+  .restart-btn { background: transparent; border: 1.5px solid #6366f1; color: #6366f1; border-radius: 10px; padding: 7px 18px; font-size: 13px; cursor: pointer; margin-left: 8px; }
+  .result-msg { margin-top: 0.75rem; font-size: 15px; font-weight: 500; min-height: 22px; }
+  .ok-msg { color: #15803d; } .err-msg { color: #b91c1c; }
+</style>
+<div class="se-wrap">
+  <div class="se-header">✏️ Escritura silábica</div>
+  <div class="se-sub">Dos ejercicios para practicar la escritura con sílabas.</div>
+
+  <div class="sec-label">① Forma la palabra arrastrando las sílabas</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px;">Toca una sílaba y luego toca el cuadro donde va.</div>
+  <div class="sil-pool" id="silPool"></div>
+  <div class="word-rows" id="wordRows"></div>
+
+  <div class="sec-label">② Une las sílabas y escribe la palabra</div>
+  <div class="sep2" id="joinRows"></div>
+  <button class="check-btn" onclick="checkJoin()">Comprobar ✔</button>
+  <button class="restart-btn" onclick="restartAll()">🔄 Reiniciar</button>
+  <div class="result-msg" id="joinResult"></div>
+</div>
+<script>
+const words = [
+  { emoji:'🌸', hint:'ma·no·jo', syllables:['ma','no','jo'], answer:'manojo' },
+  { emoji:'🍅', hint:'to·ma·te', syllables:['to','ma','te'], answer:'tomate' },
+  { emoji:'🦶', hint:'za·pa·to', syllables:['za','pa','to'], answer:'zapato' },
+  { emoji:'🌙', hint:'lu·na', syllables:['lu','na'], answer:'luna' },
+];
+const joinItems = [
+  { chips:['pa','to'], answer:'pato' },
+  { chips:['me','sa'], answer:'mesa' },
+  { chips:['so','fa'], answer:'sofa' },
+  { chips:['bo','la'], answer:'bola' },
+];
+
+let selectedSil = null;
+let placedSlots = {};
+
+function buildPart1() {
+  selectedSil = null;
+  placedSlots = {};
+  const allSyls = words.flatMap(w => [...w.syllables]).sort(() => Math.random()-0.5);
+  const pool = document.getElementById('silPool');
+  pool.innerHTML = '';
+  allSyls.forEach((s, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'sil-chip';
+    chip.textContent = s;
+    chip.dataset.syl = s;
+    chip.dataset.pid = i;
+    chip.onclick = () => selectSyl(chip);
+    pool.appendChild(chip);
+  });
+
+  const rows = document.getElementById('wordRows');
+  rows.innerHTML = '';
+  words.forEach((w, wi) => {
+    let slots = '';
+    w.syllables.forEach((_, si) => {
+      slots += `<div class="sil-slot" id="slot_${wi}_${si}" onclick="placeSlot(${wi},${si})">${si+1}</div>`;
+    });
+    rows.innerHTML += `<div class="word-cell">
+      <span class="word-emoji">${w.emoji}</span>
+      <div class="word-hint">${w.hint}</div>
+      <div class="word-slots">${slots}</div>
+    </div>`;
+  });
+}
+
+function selectSyl(chip) {
+  document.querySelectorAll('.sil-chip').forEach(c => c.style.outline='');
+  chip.style.outline = '2px solid #6366f1';
+  selectedSil = { syl: chip.dataset.syl, pid: chip.dataset.pid, el: chip };
+}
+
+function placeSlot(wi, si) {
+  if (!selectedSil) return;
+  const key = `${wi}_${si}`;
+  const prev = placedSlots[key];
+  if (prev) {
+    const prevChip = document.querySelector(`.sil-chip[data-pid="${prev.pid}"]`);
+    if (prevChip) { prevChip.classList.remove('used'); prevChip.style.outline=''; }
+  }
+  placedSlots[key] = { syl: selectedSil.syl, pid: selectedSil.pid };
+  const slot = document.getElementById(`slot_${wi}_${si}`);
+  slot.textContent = selectedSil.syl;
+  slot.classList.add('filled');
+  slot.classList.remove('correct','wrong');
+  selectedSil.el.classList.add('used');
+  selectedSil.el.style.outline = '';
+  selectedSil = null;
+}
+
+function checkPart1() {
+  let ok=0, total=0;
+  words.forEach((w, wi) => {
+    w.syllables.forEach((syl, si) => {
+      total++;
+      const slot = document.getElementById(`slot_${wi}_${si}`);
+      slot.classList.remove('correct','wrong');
+      const placed = placedSlots[`${wi}_${si}`];
+      if (placed && placed.syl === syl) { slot.classList.add('correct'); ok++; }
+      else slot.classList.add('wrong');
+    });
+  });
+  return { ok, total };
+}
+
+function buildJoin() {
+  const r = document.getElementById('joinRows');
+  r.innerHTML = '';
+  joinItems.forEach((it, i) => {
+    const chips = it.chips.map(c => `<div class="join-chip">${c}</div>`).join('<span style="font-size:14px;color:var(--color-text-secondary)">+</span>');
+    r.innerHTML += `<div class="join-row">
+      <div class="join-chips">${chips}</div>
+      <span class="arrow-lbl">→</span>
+      <input class="join-input" id="ji${i}" maxlength="8" placeholder="________">
+    </div>`;
+  });
+  document.getElementById('joinResult').innerHTML = '';
+}
+
+function checkJoin() {
+  const r1 = checkPart1();
+  let ok2=0;
+  joinItems.forEach((it, i) => {
+    const el = document.getElementById('ji'+i);
+    el.classList.remove('ok','err');
+    if (el.value.toLowerCase().replace(/\s/g,'') === it.answer) { el.classList.add('ok'); ok2++; }
+    else el.classList.add('err');
+  });
+  const totalOk = r1.ok + ok2;
+  const totalAll = r1.total + joinItems.length;
+  const msg = document.getElementById('joinResult');
+  if (totalOk === totalAll) msg.innerHTML = '<span class="ok-msg">✅ ¡Perfecto! Todo correcto.</span>';
+  else msg.innerHTML = `<span class="err-msg">❌ ${totalOk} de ${totalAll} correctas. Revisa los marcados en rojo.</span>`;
+}
+
+function restartAll() { buildPart1(); buildJoin(); }
+buildPart1(); buildJoin();
+</script>

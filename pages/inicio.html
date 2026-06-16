@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Index Principal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #FDF5E6, #91b3c9); /* fondo azul */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      width: 600px;
+    }
+
+    .btn {
+      background-color: 	#bcd4aa; /* verde sage */
+      color: rgb(0, 0, 0);
+      font-size: 60px;
+      padding: 90px;
+      
+      text-align: center;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+      
+    }
+
+    .btn:hover {
+      background-color: #4682B4; /* azul teal */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="btn" onclick="location.href='presilabicos.html'">Presilábicos</div>
+    <div class="btn" onclick="location.href='silabicos.html'">Silábicos</div>
+    <div class="btn" onclick="location.href='silabicos_alfabeticos.html'">Silábico-Alfabéticos</div>
+    <div class="btn" onclick="location.href='alfabeticos.html'">Alfabéticos</div>
+  </div>
+</body>
+</html>
