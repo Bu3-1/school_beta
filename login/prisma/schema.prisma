@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model actividades {
+  id     Int    @id @default(autoincrement())
+  titulo String @db.VarChar(100)
+  nivel  String @db.VarChar(100)
+}
+
+model alumnos {
+  id                   Int    @id @default(autoincrement())
+  nombre_anonimanizado String @db.VarChar(50)
+  edad                 Int
+  grado                Int
+  grupo                String @db.Text
+  condicion            String @db.VarChar(50)
+  id_maestro           Int
+}
+
+model intentos_actividades {
+  id           Int      @id @default(autoincrement())
+  id_alumno    Int
+  id_actividad Int
+  puntaje      Int
+  fecha        DateTime @default(now()) @db.Timestamp(0)
+}
+
+model maestros {
+  id       Int    @id @default(autoincrement())
+  nombre   String @db.VarChar(100)
+  correo   String @unique(map: "correo") @db.VarChar(100)
+  password String @db.VarChar(255)
+}
