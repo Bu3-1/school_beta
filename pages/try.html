@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta Bigotes Pro - Acceso Educadores</title>
+    <style>
+        /* ==========================================================================
+           PALETA GANADORA: MUNDO SUSURRANTE
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background-color: #faf8f5;
+        }
+
+        .split-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* LADO IZQUIERDO: Identidad y Magia */
+        .brand-side {
+            flex: 1;
+            background-color: #a192a0; /* El hermoso Lavanda Suave V2.06.69 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: #ffffff;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Ilustración de la mascota integrada en el diseño */
+        .mascota-pro {
+            width: 140px;
+            height: 140px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        /* Orejitas del gato */
+        .mascota-pro::before, .mascota-pro::after {
+            content: "";
+            position: absolute;
+            top: -6px;
+            width: 0;
+            height: 0;
+            border-bottom: 30px solid #ffffff;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+        }
+        .mascota-pro::before { left: 8px; transform: rotate(-20deg); }
+        .mascota-pro::after { right: 8px; transform: rotate(20deg); }
+
+        /* Gafas integradas */
+        .lentes-gato {
+            position: absolute;
+            top: 50px;
+            left: 25px;
+            right: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .lente-pro {
+            width: 34px;
+            height: 34px;
+            border: 4px solid #c5ccd4; /* Azul hielo */
+            border-radius: 50%;
+            background: #faf8f5;
+            position: relative;
+        }
+        .lente-pro::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #4a4a4a;
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+        }
+
+        .brand-side h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .brand-side p {
+            font-size: 18px;
+            max-width: 320px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        /* LADO DERECHO: Formulario de Login Limpio */
+        .form-side {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-color: #faf8f5;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-wrapper h2 {
+            font-size: 28px;
+            color: #4a4a4a;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #707070;
+            margin-bottom: 35px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a4a4a;
+            font-size: 14px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #888;
+        }
+
+        .form-wrapper input[type="email"],
+        .form-wrapper input[type="password"] {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            border: 2px solid #c5ccd4; /* Azul Hielo N9.07.78 */
+            border-radius: 14px;
+            font-size: 16px;
+            outline: none;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .form-wrapper input:focus {
+            border-color: #9aa192; /* Cambia con suavidad a Verde Musgo */
+            box-shadow: 0 0 0 4px rgba(154, 161, 146, 0.15);
+        }
+
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .remember-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .remember-checkbox input {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            accent-color: #9aa192;
+        }
+
+        .forgot-link {
+            color: #707070;
+            text-decoration: none;
+        }
+        .forgot-link:hover {
+            text-decoration: underline;
+            color: #9aa192;
+        }
+
+        /* Botón con presencia e identidad */
+        .btn-submit {
+            background-color: #9aa192; /* Verde Musgo J3.11.76 */
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #7e8577;
+            transition: all 0.1s ease;
+        }
+
+        .btn-submit:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #7e8577;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 35px;
+            font-size: 14px;
+            color: #707070;
+        }
+
+        .footer-text a {
+            color: #a192a0;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsivo para móviles */
+        @media (max-width: 768px) {
+            .split-container { flex-direction: column; }
+            .brand-side { padding: 40px 20px; min-height: 30vh; }
+            .form-side { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        
+        <div class="brand-side">
+            <div class="mascota-pro">
+                <div class="lentes-gato">
+                    <div class="lente-pro"></div>
+                    <div class="lente-pro"></div>
+                </div>
+            </div>
+            <h1>Ruta Bigotes</h1>
+            <p>El espacio donde transformas la lectura en una aventura para tus alumnos.</p>
+        </div>
+
+        <div class="form-side">
+            <div class="form-wrapper">
+                <h2>¡Hola, Educador!</h2>
+                <p class="subtitle">Ingresa tus datos para entrar al panel de maestros.</p>
+                
+                <form onsubmit="return false;">
+                    <div class="input-group">
+                        <label for="email">Correo Institucional</label>
+                        <div class="input-box">
+                            <span class="input-icon">✉️</span>
+                            <input type="email" id="email" placeholder="tu.nombre@escuela.edu" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">Contraseña</label>
+                        <div class="input-box">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" placeholder="Tu contraseña" required>
+                        </div>
+                    </div>
+                    
+                    <div class="options-row">
+                        <label class="remember-checkbox">
+                            <input type="checkbox"> Recuérdame en este dispositivo
+                        </label>
+                        <a href="#" class="forgot-link">¿La olvidaste?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Ingresar al Panel</button>
+                </form>
+                
+                <div class="footer-text">
+                    ¿Tu escuela es nueva? <a href="#">Regístrate aquí</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

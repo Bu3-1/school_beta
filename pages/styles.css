@@ -1,0 +1,697 @@
+/* ==========================================================================
+   RUTA BIGOTES · Sistema de estilos compartido
+   Paleta "Esquema 3 – mundo susurrante"
+   Usar en TODAS las páginas: <link rel="stylesheet" href="css/estilos.css">
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap');
+
+:root{
+  /* --- paleta base --- */
+  --bg-1: #f5f3f2;       /* FN.01.81 aclarado, fondo general */
+  --bg-2: #e9e6e4;       /* FN.01.81 */
+  --card: #ffffff;
+  --ink: #4a4853;        /* V7.11.16, texto principal */
+  --ink-soft: #8f8e94;   /* TN.02.54, texto secundario */
+  --lilac: #bebcc7;      /* V2.06.69 */
+  --teal: #c8d5d5;       /* N9.07.78 */
+  --sage: #899eb3;       /* T4.16.56, acción principal */
+  --sage-dark: #6f8299;  /* T4.16.56 oscurecido, contraste AA */
+  --olive: #cbcfb4;      /* J3.11.76, éxito / pop de color */
+  --olive-dark: #9ea683; /* J3.11.76 oscurecido, texto sobre olive */
+  --sand: #9eb6c2;       /* R6.14.65 */
+  --line: #ded9d7;       /* bordes */
+  --focus: #6f8299;      /* foco de accesibilidad */
+  --warn: #cf9a7c;       /* aviso suave, nunca rojo puro */
+  --warn-bg: #f6e9e1;
+
+  /* --- radios y sombras reutilizables --- */
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 32px;
+  --shadow-sm: 0 6px 16px rgba(74,72,83,0.08);
+  --shadow-md: 0 14px 30px rgba(74,72,83,0.12);
+  --shadow-lg: 0 24px 50px rgba(74,72,83,0.14);
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  margin:0;
+  min-height:100%;
+  font-family:'Quicksand', sans-serif;
+  color: var(--ink);
+  background: var(--bg-1);
+}
+
+body{
+  background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  min-height:100vh;
+}
+
+h1,h2,h3{
+  font-family:'Baloo 2', sans-serif;
+  margin:0;
+  color: var(--ink);
+}
+
+p{ margin:0; }
+
+a{ color: var(--sage-dark); }
+
+img{ max-width:100%; display:block; }
+
+::selection{ background: var(--lilac); color: var(--ink); }
+
+/* foco visible accesible en todo elemento interactivo */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible{
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+.container{
+  width:100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ==========================================================================
+   BARRA SUPERIOR — uso en pantallas de maestros (niveles, nivel, progreso)
+   ========================================================================== */
+
+.topbar{
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top:0;
+  z-index: 20;
+}
+
+.topbar-inner{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display:flex;
+  align-items:center;
+  gap: 18px;
+}
+
+/* Bookie como botón "volver al inicio" */
+.bookie-home{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:none;
+  border:0;
+  cursor:pointer;
+  padding: 4px 6px 4px 4px;
+  border-radius: 999px;
+  text-decoration:none;
+  transition: background .15s ease;
+}
+.bookie-home:hover, .bookie-home:focus-visible{ background: var(--bg-1); }
+.bookie-home img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--teal);
+  padding: 3px;
+}
+.bookie-home .brand-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+  text-align:left;
+}
+.bookie-home .brand-text strong{
+  font-family:'Baloo 2', sans-serif;
+  font-size: 1rem;
+  color: var(--ink);
+}
+.bookie-home .brand-text span{
+  font-size: .74rem;
+  color: var(--ink-soft);
+  font-weight:600;
+}
+
+.crumb{
+  color: var(--ink-soft);
+  font-weight:600;
+  font-size:.95rem;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.crumb strong{ color: var(--ink); }
+
+.topbar-spacer{ flex:1; }
+
+.topbar-nav{
+  display:flex;
+  align-items:center;
+  gap: 22px;
+}
+.topbar-nav a{
+  font-weight:700;
+  font-size:.92rem;
+  color: var(--ink-soft);
+  text-decoration:none;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+}
+.topbar-nav a.active, .topbar-nav a:hover{
+  color: var(--sage-dark);
+  border-color: var(--sage);
+}
+
+.profile-chip{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background: var(--bg-1);
+  border-radius: 999px;
+  padding: 6px 14px 6px 6px;
+  text-decoration:none;
+  color: var(--ink);
+  font-weight:700;
+  font-size:.88rem;
+}
+.profile-chip .avatar{
+  width:28px; height:28px;
+  border-radius:50%;
+  background: var(--sage);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.76rem;
+  font-family:'Baloo 2', sans-serif;
+}
+
+/* control de zoom / tamaño de texto — accesibilidad */
+.zoom-control{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  background: var(--bg-1);
+  border-radius: 999px;
+  padding: 4px;
+  font-weight:700;
+  font-size:.82rem;
+  color: var(--ink-soft);
+}
+.zoom-control button{
+  width:28px; height:28px;
+  border-radius:50%;
+  border:0;
+  background: var(--card);
+  color: var(--ink);
+  font-size:1rem;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 1px 3px rgba(74,72,83,0.15);
+}
+.zoom-control button:hover{ background: var(--sage); color:#fff; }
+.zoom-control .zoom-value{ min-width:38px; text-align:center; }
+.zoom-control .zoom-reset{
+  width:auto; border-radius:999px; padding:0 10px; font-size:.74rem;
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:0;
+  cursor:pointer;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:1rem;
+  letter-spacing:.3px;
+  padding: 13px 26px;
+  border-radius: var(--r-md);
+  text-decoration:none;
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+}
+.btn-primary{
+  background: linear-gradient(135deg, var(--sage), var(--sage-dark));
+  color:#fff;
+  box-shadow: 0 12px 22px rgba(111,130,153,0.32);
+}
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 26px rgba(111,130,153,0.4); }
+.btn-primary:active{ transform: translateY(0); }
+
+.btn-secondary{
+  background: var(--card);
+  color: var(--ink);
+  border: 2px solid var(--line);
+}
+.btn-secondary:hover{ border-color: var(--sage); color: var(--sage-dark); }
+
+.btn-ghost{
+  background:transparent;
+  color: var(--sage-dark);
+  padding: 10px 14px;
+}
+.btn-ghost:hover{ background: var(--bg-1); }
+
+.btn-block{ width:100%; }
+
+/* ==========================================================================
+   TARJETAS / FORMULARIOS (login, registro)
+   ========================================================================== */
+
+.auth-shell{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 40px 20px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* formas decorativas MUY sutiles, sin caras ni objetos — solo para dar aire */
+.auth-shell::before, .auth-shell::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  filter: blur(2px);
+  opacity:.5;
+  z-index:0;
+}
+.auth-shell::before{
+  width: 420px; height:420px;
+  background: radial-gradient(circle, var(--lilac), transparent 70%);
+  top: -140px; left: -120px;
+  opacity:.35;
+}
+.auth-shell::after{
+  width: 380px; height:380px;
+  background: radial-gradient(circle, var(--sand), transparent 70%);
+  bottom: -160px; right: -100px;
+  opacity:.3;
+}
+
+.auth-card{
+  position:relative;
+  z-index:1;
+  background: var(--card);
+  width:100%;
+  max-width: 440px;
+  border-radius: var(--r-xl);
+  padding: 40px 38px 34px;
+  box-shadow: var(--shadow-lg);
+}
+.auth-card.wide{ max-width: 620px; }
+
+.auth-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom: 4px;
+}
+.auth-brand img{
+  width:52px; height:52px;
+  border-radius:50%;
+  background: var(--teal);
+  padding:4px;
+  object-fit:cover;
+}
+.auth-brand h1{ font-size:1.5rem; }
+.auth-brand .tag{
+  display:block;
+  font-size:.76rem;
+  font-weight:700;
+  color: var(--ink-soft);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.auth-subtitle{
+  margin: 14px 0 26px;
+  color: var(--ink-soft);
+  font-weight:600;
+  font-size:.98rem;
+}
+
+.field{ margin-bottom: 18px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:.8rem;
+  letter-spacing:.4px;
+  color:#6c6c78;
+  text-transform: uppercase;
+  margin-bottom:8px;
+}
+
+.input-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border: 2px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 12px 16px;
+  background:#fbfbfa;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.input-wrap svg{ flex-shrink:0; }
+.input-wrap:focus-within{
+  border-color: var(--focus);
+  box-shadow: 0 0 0 4px rgba(111,130,153,0.18);
+}
+input, select{
+  border:0; outline:0; background:transparent; width:100%;
+  font-family:'Quicksand', sans-serif; font-weight:600; font-size:1.02rem;
+  color: var(--ink);
+}
+input::placeholder{ color:#b7b3ac; font-weight:600; }
+
+.check-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin: 6px 0 22px;
+  font-size:.88rem;
+  color: var(--ink-soft);
+  font-weight:600;
+}
+.check-row input{ width:auto; margin-top:3px; accent-color: var(--sage-dark); }
+
+.auth-foot{
+  text-align:center;
+  margin-top: 20px;
+  color: var(--ink-soft);
+  font-weight:600;
+  font-size:.92rem;
+}
+.auth-foot a{ color: var(--sage-dark); font-weight:700; text-decoration:none; border-bottom:1px dashed var(--lilac); }
+.auth-foot a:hover{ color: var(--ink); }
+
+.help-link{
+  display:block;
+  text-align:center;
+  margin-top: 16px;
+  color: var(--ink-soft);
+  text-decoration:none;
+  font-weight:600;
+  font-size:.86rem;
+}
+.help-link:hover{ color: var(--ink); }
+
+/* ==========================================================================
+   NIVELES — pantalla principal (grid 2x2)
+   ========================================================================== */
+
+.page-head{
+  padding: 34px 0 26px;
+  text-align:center;
+}
+.page-head h2{ font-size: clamp(1.5rem, 3vw, 2rem); }
+.page-head p{
+  margin-top:8px;
+  color: var(--ink-soft);
+  font-weight:600;
+}
+
+.levels-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  padding: 6px 0 48px;
+}
+
+.level-card{
+  position:relative;
+  background: var(--card);
+  border-radius: var(--r-lg);
+  padding: 28px 26px;
+  text-decoration:none;
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--accent, var(--sage));
+  min-height: 190px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.level-card:hover, .level-card:focus-visible{
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.level-card .level-eyebrow{
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  color: var(--accent-dark, var(--sage-dark));
+}
+.level-card h3{ font-size:1.35rem; }
+.level-card .level-desc{
+  color: var(--ink-soft);
+  font-weight:600;
+  font-size:.9rem;
+  flex:1;
+}
+
+.level-progress{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:4px;
+}
+.level-progress .bar{
+  flex:1;
+  height:8px;
+  border-radius:999px;
+  background: var(--bg-2);
+  overflow:hidden;
+}
+.level-progress .bar span{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background: var(--accent, var(--sage));
+}
+.level-progress small{ font-weight:700; color: var(--ink-soft); font-size:.76rem; white-space:nowrap; }
+
+.level-card[data-accent="lilac"]{ --accent: var(--lilac); --accent-dark:#8b89a3; }
+.level-card[data-accent="teal"]{ --accent: var(--sand); --accent-dark: var(--sage-dark); }
+.level-card[data-accent="olive"]{ --accent: var(--olive); --accent-dark: var(--olive-dark); }
+.level-card[data-accent="sage"]{ --accent: var(--sage); --accent-dark: var(--sage-dark); }
+
+/* ==========================================================================
+   DETALLE DE NIVEL — secciones Escritura / Lectura / Comprensión
+   ========================================================================== */
+
+.skill-section{
+  background: var(--card);
+  border-radius: var(--r-lg);
+  padding: 26px 28px 30px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+}
+.skill-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom: 20px;
+}
+.skill-head .dot{
+  width:12px; height:12px; border-radius:50%;
+  background: var(--accent, var(--sage));
+}
+.skill-head h3{ font-size:1.2rem; }
+.skill-head span{
+  color: var(--ink-soft);
+  font-weight:600;
+  font-size:.86rem;
+}
+
+.skill-section[data-skill="escritura"]{ --accent: var(--sage); }
+.skill-section[data-skill="lectura"]{ --accent: var(--sand); }
+.skill-section[data-skill="comprension"]{ --accent: var(--olive-dark); }
+
+.activity-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.activity-card{
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 18px;
+  text-decoration:none;
+  color: var(--ink);
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  min-height: 128px;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.activity-card:hover, .activity-card:focus-visible{
+  background:#fff;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-3px);
+}
+.activity-card .icon{
+  width:38px; height:38px;
+  border-radius:10px;
+  background: var(--accent, var(--sage));
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+}
+.activity-card strong{ font-family:'Baloo 2', sans-serif; font-size:.98rem; line-height:1.25; }
+.activity-card .status{
+  margin-top:auto;
+  font-size:.72rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  padding: 4px 10px;
+  border-radius:999px;
+  width:fit-content;
+}
+.status.pendiente{ background:#eee; color: var(--ink-soft); }
+.status.progreso{ background: #eaf0f3; color: var(--sage-dark); }
+.status.completo{ background: #e9ecdf; color: var(--olive-dark); }
+
+/* ==========================================================================
+   PROGRESO — panel de maestros
+   ========================================================================== */
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:14px;
+  margin-bottom: 22px;
+}
+.filters{ display:flex; gap:10px; flex-wrap:wrap; }
+.filters select{
+  border:1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-weight:700;
+  font-size:.86rem;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.student-list{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.student-row{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px 22px;
+  display:grid;
+  grid-template-columns: auto 1fr auto;
+  align-items:center;
+  gap: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.student-id{ display:flex; align-items:center; gap:12px; }
+.student-avatar{
+  width:44px; height:44px;
+  border-radius:50%;
+  background: var(--lilac);
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:.95rem;
+  flex-shrink:0;
+}
+.student-name{ font-family:'Baloo 2', sans-serif; font-weight:700; font-size:1rem; }
+.student-meta{ font-size:.8rem; color: var(--ink-soft); font-weight:600; }
+
+.student-skills{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(120px,1fr));
+  gap: 16px;
+}
+.skill-meter{ display:flex; flex-direction:column; gap:5px; }
+.skill-meter .label-row{
+  display:flex; justify-content:space-between;
+  font-size:.72rem; font-weight:700; color: var(--ink-soft);
+}
+.skill-meter .bar{ height:7px; border-radius:999px; background: var(--bg-2); overflow:hidden; }
+.skill-meter .bar span{ display:block; height:100%; border-radius:999px; }
+.skill-meter[data-skill="escritura"] .bar span{ background: var(--sage); }
+.skill-meter[data-skill="lectura"] .bar span{ background: var(--sand); }
+.skill-meter[data-skill="comprension"] .bar span{ background: var(--olive-dark); }
+
+.level-badge{
+  justify-self:end;
+  background: var(--bg-1);
+  color: var(--ink);
+  font-weight:700;
+  font-size:.78rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+  white-space:nowrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px){
+  .levels-grid{ grid-template-columns: 1fr; }
+  .student-row{ grid-template-columns: 1fr; }
+  .level-badge{ justify-self:start; }
+  .student-skills{ grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px){
+  .topbar-inner{ flex-wrap:wrap; gap:10px; }
+  .topbar-nav{ order:3; width:100%; justify-content:flex-start; gap:16px; }
+  .zoom-control{ display:none; }
+  .field-row{ grid-template-columns:1fr; }
+}
+
+@media (max-width: 480px){
+  .auth-card{ padding: 30px 22px 26px; border-radius: var(--r-lg); }
+  .container{ padding: 0 16px; }
+  .student-skills{ grid-template-columns: 1fr; }
+  .activity-grid{ grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
+}

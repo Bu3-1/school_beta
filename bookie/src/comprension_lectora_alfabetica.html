@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprensión Lectora Alfabética</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f3fdf3; min-height: 100vh; padding: 32px 24px; }
+
+  .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .page-header h1 { font-size: 22px; font-weight: 700; color: #333; }
+  .page-subtitle { font-size: 14px; color: #666; margin-bottom: 28px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-right: 8px; }
+  .badge-level { background: #c8e6c9; color: #1b5e20; }
+  .badge-inst  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .badge-num   { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: 2px solid currentColor; font-size: 11px; font-weight: 700; }
+
+  /* Texto principal */
+  .story-box { background: #fff; border: 2px solid #a5d6a7; border-radius: 18px; padding: 22px 24px; margin-bottom: 26px; position: relative; }
+  .story-title { font-size: 19px; font-weight: 800; color: #1b5e20; margin-bottom: 10px; }
+  .story-text { font-size: 17px; line-height: 1.8; color: #333; }
+  .story-text p { margin-bottom: 8px; }
+  .story-img { font-size: 52px; float: right; margin-left: 16px; }
+
+  /* ① Preguntas de selección */
+  .questions { display: flex; flex-direction: column; gap: 22px; }
+  .q-block { background: #fff; border: 1.5px solid #c8e6c9; border-radius: 14px; padding: 18px 20px; }
+  .q-text  { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 12px; }
+  .q-options { display: flex; flex-direction: column; gap: 8px; }
+  .q-opt { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #c8e6c9; background: #f9fdf9; cursor: pointer; font-size: 15px; color: #333; transition: all 0.15s; }
+  .q-opt:hover { background: #e8f5e9; border-color: #66bb6a; }
+  .q-opt input[type=radio] { accent-color: #43a047; width: 18px; height: 18px; flex-shrink: 0; }
+  .q-opt.correct { background: #e8f5e9; border-color: #43a047; color: #1b5e20; font-weight: 600; }
+  .q-opt.wrong   { background: #ffebee; border-color: #e53935; color: #b71c1c; }
+
+  /* ② Ordena las oraciones */
+  .order-instructions { font-size: 13px; color: #555; margin-bottom: 12px; }
+  .order-list { display: flex; flex-direction: column; gap: 10px; }
+  .order-item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1.5px solid #c8e6c9; border-radius: 12px; padding: 12px 16px; cursor: grab; user-select: none; }
+  .order-item.dragging { opacity: 0.4; }
+  .order-item.dragover { border-color: #43a047; background: #e8f5e9; }
+  .drag-handle { color: #aaa; font-size: 18px; cursor: grab; }
+  .order-num { width: 28px; height: 28px; border-radius: 50%; background: #c8e6c9; color: #1b5e20; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .order-text { font-size: 15px; color: #333; }
+
+  /* ③ Respuesta abierta */
+  .open-q { background: #fff; border: 1.5px solid #c8e6c9; border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+  .open-q-text { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 10px; }
+  .open-input { width: 100%; border: none; border-bottom: 2.5px solid #a5d6a7; background: transparent; font-size: 16px; color: #333; outline: none; padding: 6px 2px; font-family: 'Segoe UI', Arial, sans-serif; }
+  .open-input:focus { border-bottom-color: #2e7d32; }
+  .open-input::placeholder { color: #ccc; }
+
+  .check-btn { display: block; margin: 8px auto 0; padding: 10px 28px; border-radius: 22px; border: none; background: #43a047; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .check-btn:hover { background: #1b5e20; }
+  .feedback { text-align: center; font-size: 14px; font-weight: 600; margin-top: 8px; min-height: 20px; }
+  .feedback.correct { color: #2e7d32; }
+  .feedback.wrong   { color: #c62828; }
+
+  hr { border:none; border-top:1.5px solid #c8e6c9; margin: 8px 0 24px; }
+  .section { margin-bottom: 28px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span style="font-size:24px;">🧠</span>
+  <h1>Comprensión lectora</h1>
+</div>
+<p class="page-subtitle">Lee el texto y responde las preguntas.</p>
+
+<div style="margin-bottom:20px;">
+  <span class="badge badge-level">⭐ Nivel: Alfabético</span>
+</div>
+
+<!-- TEXTO -->
+<div class="story-box">
+  <span class="story-img">🐱</span>
+  <div class="story-title">El gato Pipo</div>
+  <div class="story-text">
+    <p>Pipo es un gato naranja. Tiene el pelo suave y los ojos verdes.</p>
+    <p>Pipo vive en una casa con una niña que se llama Lina.</p>
+    <p>A Pipo le gusta dormir al sol y tomar leche.</p>
+    <p>Por las noches, Pipo duerme con Lina en su cama.</p>
+  </div>
+</div>
+
+<!-- SECCIÓN 1: Preguntas -->
+<div style="margin-bottom:20px;">
+  <span class="badge badge-inst"><span class="badge-num">①</span> Elige la respuesta correcta</span>
+</div>
+
+<div class="section">
+  <div class="questions" id="questions">
+
+    <div class="q-block" data-correct="b">
+      <p class="q-text">¿De qué color es el gato Pipo?</p>
+      <div class="q-options">
+        <label class="q-opt"><input type="radio" name="q1" value="a"> Negro</label>
+        <label class="q-opt"><input type="radio" name="q1" value="b"> Naranja</label>
+        <label class="q-opt"><input type="radio" name="q1" value="c"> Blanco</label>
+      </div>
+    </div>
+
+    <div class="q-block" data-correct="c">
+      <p class="q-text">¿Cómo se llama la niña?</p>
+      <div class="q-options">
+        <label class="q-opt"><input type="radio" name="q2" value="a"> María</label>
+        <label class="q-opt"><input type="radio" name="q2" value="b"> Sara</label>
+        <label class="q-opt"><input type="radio" name="q2" value="c"> Lina</label>
+      </div>
+    </div>
+
+    <div class="q-block" data-correct="a">
+      <p class="q-text">¿Qué le gusta tomar a Pipo?</p>
+      <div class="q-options">
+        <label class="q-opt"><input type="radio" name="q3" value="a"> Leche</label>
+        <label class="q-opt"><input type="radio" name="q3" value="b"> Agua</label>
+        <label class="q-opt"><input type="radio" name="q3" value="c"> Jugo</label>
+      </div>
+    </div>
+
+    <div class="q-block" data-correct="b">
+      <p class="q-text">¿Dónde duerme Pipo por las noches?</p>
+      <div class="q-options">
+        <label class="q-opt"><input type="radio" name="q4" value="a"> En el jardín</label>
+        <label class="q-opt"><input type="radio" name="q4" value="b"> En la cama de Lina</label>
+        <label class="q-opt"><input type="radio" name="q4" value="c"> En el sofá</label>
+      </div>
+    </div>
+
+  </div>
+  <button class="check-btn" onclick="checkQuestions()">Revisar ✓</button>
+  <p class="feedback" id="fb-q"></p>
+</div>
+
+<hr>
+
+<!-- SECCIÓN 2: Ordena -->
+<div style="margin-bottom:20px;">
+  <span class="badge badge-inst"><span class="badge-num">②</span> Ordena lo que hace Pipo</span>
+</div>
+
+<div class="section">
+  <p class="order-instructions">Arrastra las oraciones en el orden correcto según el cuento.</p>
+  <div class="order-list" id="order-list">
+    <div class="order-item" draggable="true" data-order="3">
+      <span class="drag-handle">⠿</span>
+      <span class="order-num" id="on1">?</span>
+      <span class="order-text">Pipo duerme con Lina por la noche.</span>
+    </div>
+    <div class="order-item" draggable="true" data-order="1">
+      <span class="drag-handle">⠿</span>
+      <span class="order-num" id="on2">?</span>
+      <span class="order-text">Pipo vive con una niña llamada Lina.</span>
+    </div>
+    <div class="order-item" draggable="true" data-order="2">
+      <span class="drag-handle">⠿</span>
+      <span class="order-num" id="on3">?</span>
+      <span class="order-text">Pipo duerme al sol y toma leche.</span>
+    </div>
+  </div>
+  <button class="check-btn" onclick="checkOrder()">Revisar ✓</button>
+  <p class="feedback" id="fb-order"></p>
+</div>
+
+<hr>
+
+<!-- SECCIÓN 3: Pregunta abierta -->
+<div style="margin-bottom:20px;">
+  <span class="badge badge-inst"><span class="badge-num">③</span> Escribe con tus palabras</span>
+</div>
+
+<div class="section">
+  <div class="open-q">
+    <p class="open-q-text">¿Cómo crees que se siente Lina con su gato Pipo?</p>
+    <input class="open-input" type="text" placeholder="Escribe tu respuesta aquí...">
+  </div>
+  <div class="open-q">
+    <p class="open-q-text">¿Tienes tú una mascota? ¿Cómo se llama?</p>
+    <input class="open-input" type="text" placeholder="Escribe tu respuesta aquí...">
+  </div>
+  <button class="check-btn" onclick="checkOpen()">Listo ✓</button>
+  <p class="feedback" id="fb-open"></p>
+</div>
+
+<script>
+// ── Sección 1 ──
+function checkQuestions(){
+  const blocks = document.querySelectorAll('.q-block');
+  let correct=0, answered=0;
+  blocks.forEach(block=>{
+    const expected = block.dataset.correct;
+    const chosen   = block.querySelector('input[type=radio]:checked');
+    block.querySelectorAll('.q-opt').forEach(l=>l.classList.remove('correct','wrong'));
+    if(!chosen) return;
+    answered++;
+    const label = chosen.closest('.q-opt');
+    if(chosen.value === expected){ label.classList.add('correct'); correct++; }
+    else { label.classList.add('wrong'); }
+  });
+  const fb = document.getElementById('fb-q');
+  if(answered < blocks.length){ fb.textContent='Responde todas las preguntas.'; fb.className='feedback wrong'; return; }
+  if(correct===blocks.length){ fb.textContent='¡Perfecto! ¡Leíste muy bien! 🎉'; fb.className='feedback correct'; }
+  else { fb.textContent=`${correct} de ${blocks.length} correctas. ¡Vuelve a leer el cuento!`; fb.className='feedback wrong'; }
+}
+
+// ── Sección 2: Drag & Drop ──
+const list = document.getElementById('order-list');
+let dragged = null;
+list.querySelectorAll('.order-item').forEach(item=>{
+  item.addEventListener('dragstart',()=>{ dragged=item; setTimeout(()=>item.classList.add('dragging'),0); });
+  item.addEventListener('dragend',()=>{ item.classList.remove('dragging'); updateNums(); });
+  item.addEventListener('dragover',e=>{ e.preventDefault(); item.classList.add('dragover'); });
+  item.addEventListener('dragleave',()=>item.classList.remove('dragover'));
+  item.addEventListener('drop',e=>{
+    e.preventDefault(); item.classList.remove('dragover');
+    if(dragged && dragged!==item){
+      const items=[...list.children];
+      const di=items.indexOf(dragged), ti=items.indexOf(item);
+      if(di<ti) list.insertBefore(dragged, item.nextSibling);
+      else list.insertBefore(dragged, item);
+    }
+    updateNums();
+  });
+});
+function updateNums(){
+  [...list.children].forEach((item,i)=>{ item.querySelector('.order-num').textContent=i+1; });
+}
+function checkOrder(){
+  const items=[...list.children];
+  const order=items.map(i=>parseInt(i.dataset.order));
+  const correct = order[0]===1 && order[1]===2 && order[2]===3;
+  const fb=document.getElementById('fb-order');
+  if(correct){ fb.textContent='¡Correcto! Muy buen orden 🌟'; fb.className='feedback correct'; }
+  else { fb.textContent='Ese no es el orden del cuento. ¡Inténtalo de nuevo!'; fb.className='feedback wrong'; }
+}
+
+// ── Sección 3 ──
+function checkOpen(){
+  const inputs = document.querySelectorAll('.open-q .open-input');
+  let filled=0;
+  inputs.forEach(i=>{ if(i.value.trim().length>0) filled++; });
+  const fb=document.getElementById('fb-open');
+  if(filled===inputs.length){ fb.textContent='¡Genial! Muy buenas respuestas 💚'; fb.className='feedback correct'; }
+  else { fb.textContent='Escribe algo en todas las preguntas.'; fb.className='feedback wrong'; }
+}
+</script>
+</body>
+</html>

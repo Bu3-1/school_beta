@@ -1,0 +1,178 @@
+/* ==========================================================================
+   RUTA BIGOTES · Estilos de la pantalla de ACTIVIDAD (vista del niño)
+   Cargar DESPUÉS de estilos.css:
+   <link rel="stylesheet" href="css/estilos.css">
+   <link rel="stylesheet" href="css/actividades.css">
+   ========================================================================== */
+
+.activity-body{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* barra mínima: solo Bookie para salir + progreso en puntos, nada más */
+.activity-topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 18px 24px;
+}
+
+.exit-bookie{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background: var(--card);
+  border:0;
+  border-radius: 999px;
+  padding: 6px 16px 6px 6px;
+  cursor:pointer;
+  box-shadow: var(--shadow-sm);
+  text-decoration:none;
+  color: var(--ink);
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size:.9rem;
+  transition: transform .15s ease;
+}
+.exit-bookie:hover{ transform: translateY(-2px); }
+.exit-bookie img{
+  width:38px; height:38px;
+  border-radius:50%;
+  object-fit:cover;
+  background: var(--teal);
+}
+
+.dots{
+  display:flex;
+  gap:8px;
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+.dots span{
+  width:11px; height:11px;
+  border-radius:50%;
+  background: var(--line);
+}
+.dots span.done{ background: var(--olive-dark); }
+.dots span.current{
+  background: var(--sage);
+  transform: scale(1.25);
+}
+
+/* zona central de juego */
+.activity-stage{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 26px;
+  padding: 10px 24px 50px;
+  text-align:center;
+}
+
+.mascot-row{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+.mascot-row img{
+  width: 150px;
+  filter: drop-shadow(0 14px 20px rgba(74,72,83,0.16));
+  animation: bookie-float 4.5s ease-in-out infinite;
+}
+@keyframes bookie-float{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-8px) rotate(-1.5deg); }
+}
+
+.speech{
+  background: var(--card);
+  border-radius: 20px;
+  padding: 14px 22px;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size: clamp(1rem, 2.6vw, 1.25rem);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  max-width: 420px;
+}
+
+.prompt-word{
+  font-family:'Baloo 2', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  color: var(--sage-dark);
+  letter-spacing: 1px;
+}
+
+.match-grid{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 18px;
+  max-width: 720px;
+  width:100%;
+}
+
+.match-card{
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22px 10px;
+  font-family:'Baloo 2', sans-serif;
+  font-weight:800;
+  font-size: 1.6rem;
+  color: var(--ink);
+  cursor:pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s ease, border-color .15s ease, background .2s ease;
+}
+.match-card:hover{ transform: translateY(-3px); border-color: var(--sand); }
+
+.match-card.correct{
+  background: var(--olive);
+  border-color: var(--olive-dark);
+  color: #4d5a3c;
+  animation: pop .35s ease;
+}
+.match-card.retry{
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  animation: shake .45s ease;
+}
+@keyframes pop{
+  0%{ transform: scale(1); }
+  40%{ transform: scale(1.08); }
+  100%{ transform: scale(1); }
+}
+@keyframes shake{
+  0%,100%{ transform: translateX(0); }
+  25%{ transform: translateX(-6px); }
+  75%{ transform: translateX(6px); }
+}
+
+.feedback-banner{
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700;
+  font-size: 1.05rem;
+  padding: 10px 20px;
+  border-radius: 999px;
+  min-height: 20px;
+}
+.feedback-banner.ok{ background: var(--olive); color:#4d5a3c; }
+.feedback-banner.retry{ background: var(--warn-bg); color: #8a5a3c; }
+
+.activity-actions{
+  display:flex;
+  gap:14px;
+  margin-top:6px;
+}
+
+@media (max-width: 640px){
+  .match-grid{ grid-template-columns: repeat(2, 1fr); }
+  .mascot-row img{ width:110px; }
+}

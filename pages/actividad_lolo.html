@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Bigotes · Actividad</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="actividades.css">
+</head>
+<body class="activity-body">
+
+<div class="activity-topbar">
+  <a class="exit-bookie" href="nivel_detalle.html" title="Salir y volver con Bookie">
+    <img src="images/Logo.png" alt="">
+    Salir
+  </a>
+  <div class="dots" aria-label="Progreso de la actividad">
+    <span class="done"></span>
+    <span class="done"></span>
+    <span class="current"></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<main class="activity-stage">
+
+  <div class="mascot-row">
+    <img src="assets/bookie-full.png" alt="Bookie el gato">
+    <div class="speech" id="instruccion">¡Encuentra la sílaba que empieza igual que la palabra!</div>
+  </div>
+
+  <div class="prompt-word" id="palabra">GA&#8209;TO</div>
+
+  <div class="match-grid" id="matchGrid">
+    <button class="match-card" data-valor="ga">GA</button>
+    <button class="match-card" data-valor="lo">LO</button>
+    <button class="match-card" data-valor="me">ME</button>
+    <button class="match-card" data-valor="ru">RU</button>
+  </div>
+
+  <div class="feedback-banner" id="feedback" aria-live="polite"></div>
+
+  <div class="activity-actions">
+    <button class="btn btn-secondary" id="repetir">🔊 Escuchar de nuevo</button>
+  </div>
+
+</main>
+
+<script>
+  const respuestaCorrecta = 'ga';
+  const feedback = document.getElementById('feedback');
+  const cards = document.querySelectorAll('.match-card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      if (card.classList.contains('correct')) return;
+
+      if (card.dataset.valor === respuestaCorrecta) {
+        card.classList.add('correct');
+        feedback.textContent = '¡Muy bien! Esa es la sílaba correcta 🎉';
+        feedback.className = 'feedback-banner ok';
+        cards.forEach(c => { if (c !== card) c.disabled = true; });
+      } else {
+        card.classList.add('retry');
+        feedback.textContent = '¡Casi! Escucha de nuevo e inténtalo otra vez.';
+        feedback.className = 'feedback-banner retry';
+        setTimeout(() => card.classList.remove('retry'), 500);
+      }
+    });
+  });
+
+  document.getElementById('repetir').addEventListener('click', () => {
+    // Aquí se conectaría el audio real de la palabra/instrucción.
+    feedback.textContent = '🔊 Reproduciendo instrucción...';
+    feedback.className = 'feedback-banner';
+  });
+</script>
+
+</body>
+</html>

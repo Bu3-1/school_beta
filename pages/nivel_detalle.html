@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Bigotes · Nivel</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body style="font-size:100%;">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="bookie-home" href="niveles.html">
+      <img src="images/Logo.png" alt="">
+      <span class="brand-text"><strong>Ruta Bigotes</strong><span>Panel de maestros</span></span>
+    </a>
+
+    <span class="crumb"><a href="niveles.html" style="color:inherit;text-decoration:none;">Niveles</a> / <strong id="nivelCrumb">Silábicos</strong></span>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="zoom-control" aria-label="Ajustar tamaño de texto">
+      <button type="button" id="zoomOut" aria-label="Reducir tamaño de texto">−</button>
+      <span class="zoom-value" id="zoomValue">100%</span>
+      <button type="button" id="zoomIn" aria-label="Aumentar tamaño de texto">+</button>
+      <button type="button" id="zoomReset" class="zoom-reset">Reset</button>
+    </div>
+
+    <a class="profile-chip" href="#">
+      <span class="avatar">MG</span>
+      Miss Gaby
+    </a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head" style="text-align:left; padding-left:2px;">
+    <h2 id="nivelTitulo">Silábicos</h2>
+    <p>Selecciona una actividad para asignarla o revisarla con tu grupo.</p>
+  </div>
+
+  <section class="skill-section" data-skill="escritura">
+    <div class="skill-head">
+      <span class="dot"></span>
+      <h3>Escritura</h3>
+      <span>4 actividades</span>
+    </div>
+    <div class="activity-grid">
+      <a class="activity-card" href="actividad.html?tipo=trazo">
+        <span class="icon">Aa</span>
+        <strong>Traza la sílaba</strong>
+        <span class="status completo">Completo</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=copia">
+        <span class="icon">Bb</span>
+        <strong>Copia la palabra</strong>
+        <span class="status progreso">En progreso</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=completa">
+        <span class="icon">Cc</span>
+        <strong>Completa la palabra</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=dictado">
+        <span class="icon">Dd</span>
+        <strong>Dictado guiado</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="skill-section" data-skill="lectura">
+    <div class="skill-head">
+      <span class="dot"></span>
+      <h3>Lectura</h3>
+      <span>4 actividades</span>
+    </div>
+    <div class="activity-grid">
+      <a class="activity-card" href="actividad.html?tipo=reconoce">
+        <span class="icon">Aa</span>
+        <strong>Reconoce la sílaba</strong>
+        <span class="status completo">Completo</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=selecciona">
+        <span class="icon">Bb</span>
+        <strong>Lee y selecciona</strong>
+        <span class="status progreso">En progreso</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=empareja">
+        <span class="icon">Cc</span>
+        <strong>Empareja imagen y palabra</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=vozalta">
+        <span class="icon">Dd</span>
+        <strong>Lectura en voz alta</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="skill-section" data-skill="comprension">
+    <div class="skill-head">
+      <span class="dot"></span>
+      <h3>Comprensión lectora</h3>
+      <span>4 actividades</span>
+    </div>
+    <div class="activity-grid">
+      <a class="activity-card" href="actividad.html?tipo=orden">
+        <span class="icon">Aa</span>
+        <strong>¿Qué pasó primero?</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=idea">
+        <span class="icon">Bb</span>
+        <strong>Elige la idea principal</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=preguntas">
+        <span class="icon">Cc</span>
+        <strong>Responde preguntas</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+      <a class="activity-card" href="actividad.html?tipo=historia">
+        <span class="icon">Dd</span>
+        <strong>Ordena la historia</strong>
+        <span class="status pendiente">Sin iniciar</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<script>
+  // --- título dinámico según el nivel elegido en niveles.html ---
+  const nombres = {
+    'presilabicos': 'Presilábicos',
+    'silabicos': 'Silábicos',
+    'silabico-alfabeticos': 'Silábico-Alfabéticos',
+    'alfabeticos': 'Alfabéticos'
+  };
+  const params = new URLSearchParams(window.location.search);
+  const nivel = params.get('nivel');
+  if (nivel && nombres[nivel]) {
+    document.title = 'Ruta Bigotes · ' + nombres[nivel];
+    document.getElementById('nivelTitulo').textContent = nombres[nivel];
+    document.getElementById('nivelCrumb').textContent = nombres[nivel];
+  }
+
+  // --- control de zoom / tamaño de texto, accesible para todo el panel ---
+  let zoom = 100;
+  const root = document.documentElement;
+  const zoomValue = document.getElementById('zoomValue');
+  function applyZoom(){
+    root.style.fontSize = zoom + '%';
+    zoomValue.textContent = zoom + '%';
+  }
+  document.getElementById('zoomIn').addEventListener('click', () => { zoom = Math.min(150, zoom + 10); applyZoom(); });
+  document.getElementById('zoomOut').addEventListener('click', () => { zoom = Math.max(80, zoom - 10); applyZoom(); });
+  document.getElementById('zoomReset').addEventListener('click', () => { zoom = 100; applyZoom(); });
+</script>
+
+</body>
+</html>

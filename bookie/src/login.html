@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Feliz — Iniciar sesión</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="division">
+
+  <!-- Panel izquierdo: logo y marca -->
+  <div class="division__marca">
+    <div class="division__logo">📖</div>
+    <p class="division__nombre">Aula Feliz</p>
+    <p class="division__descripcion">La plataforma para acompañar el aprendizaje de tus estudiantes</p>
+  </div>
+
+  <!-- Panel derecho: formulario -->
+  <div class="division__formulario">
+    <div class="division__formulario-interior">
+
+      <h1 class="contenido__titulo">Bienvenida de vuelta</h1>
+      <p class="contenido__subtitulo">Ingresa a tu cuenta de maestra</p>
+
+      <form id="formLogin">
+        <div class="campo">
+          <label class="campo__etiqueta" for="correo">Correo electrónico</label>
+          <input class="campo__input" type="email" id="correo" placeholder="nombre@escuela.edu" required>
+        </div>
+
+        <div class="campo">
+          <label class="campo__etiqueta" for="contrasena">Contraseña</label>
+          <input class="campo__input" type="password" id="contrasena" placeholder="••••••••" required>
+        </div>
+
+        <div style="text-align:right; margin-bottom:20px;">
+          <a href="#" class="texto-chico">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primario btn-ancho-completo">Iniciar sesión</button>
+      </form>
+
+      <p class="texto-chico texto-centrado margen-arriba-mediano">
+        ¿No tienes cuenta? <a href="registro.html">Regístrate</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Por ahora esto solo simula el inicio de sesión y lleva a la lista de alumnos.
+  // Cuando tengas un backend, aquí harías la petición real de login.
+  document.getElementById('formLogin').addEventListener('submit', function (e) {
+    e.preventDefault();
+    window.location.href = 'alumnos.html';
+  });
+</script>
+
+</body>
+</html>

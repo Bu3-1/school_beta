@@ -1,0 +1,544 @@
+/* =========================================================
+   AULA FELIZ — HOJA DE ESTILOS COMPARTIDA
+   Este archivo controla el diseño de TODAS las páginas.
+   Está dividido en secciones para que sea fácil de leer:
+
+   1. Variables de color (tu paleta)
+   2. Reset básico y tipografía general
+   3. Layout general (contenedores)
+   4. Componentes: botones
+   5. Componentes: inputs / formularios
+   6. Componentes: tarjetas (cards)
+   7. Componentes: badges (etiquetas de estado)
+   8. Componentes: avatares
+   9. Componentes: barra de progreso
+   10. Página de login/registro (panel dividido)
+   11. Utilidades varias
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. VARIABLES DE COLOR
+   Todo el color del sitio sale de aquí. Si un día quieres
+   cambiar un tono, solo lo cambias en esta lista y se
+   actualiza en TODAS las páginas automáticamente.
+   --------------------------------------------------------- */
+:root {
+  /* Colores base (extraídos de la imagen del gato) */
+  --color-gris-pizarra: #8C93A1;
+  --color-crema: #F5F1EC;
+  --color-blanco: #FFFFFF;
+  --color-vino: #0F6E56;       /* Color de acento principal: botones, links, foco (verde oscuro) */
+  --color-vino-hover: #0B5744; /* Un poco más oscuro, para el hover de botones */
+  --color-negro: #110F0F;      /* Texto principal */
+  --color-marron: #585347;     /* Texto secundario */
+
+  /* Colores de nivel / iconos */
+  --color-salvia: #BED0CE;
+  --color-salvia-oscuro: #0F6E56;
+  --color-lavanda: #C2C1D5;
+  --color-purpura-oscuro: #3C3489;
+  --color-coral-claro: #FAECE7;
+  --color-coral-oscuro: #993C1D;
+  --color-rosa-claro: #FBEAF0;
+  --color-rosa-oscuro: #993556;
+
+  /* Colores de estado (badges) */
+  --color-estado-bien-fondo: #EAF3DE;
+  --color-estado-bien-texto: #3B6D11;
+  --color-estado-progreso-fondo: #FAEEDA;
+  --color-estado-progreso-texto: #854F0B;
+  --color-estado-atencion-fondo: #FBEAF0;
+  --color-estado-atencion-texto: #993556;
+
+  /* Bordes y superficies neutras */
+  --color-borde: #D3D1C7;
+  --color-gris-deshabilitado: #D3D1C7;
+  --color-texto-deshabilitado: #888780;
+
+  /* Tipografía */
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+  --fuente-texto: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Espaciado y bordes redondeados, para mantener todo consistente */
+  --radio-chico: 8px;
+  --radio-mediano: 12px;
+  --radio-grande: 16px;
+  --sombra-suave: 0 1px 3px rgba(17, 15, 15, 0.06);
+}
+
+
+/* ---------------------------------------------------------
+   2. RESET BÁSICO Y TIPOGRAFÍA GENERAL
+   --------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-crema);
+  color: var(--color-negro);
+  font-family: var(--fuente-texto);
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-family: var(--fuente-titulos);
+  margin: 0;
+}
+
+a {
+  color: var(--color-vino);
+}
+
+/* Anillo de foco visible para navegación con teclado (accesibilidad) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-vino);
+  outline-offset: 2px;
+}
+
+
+/* ---------------------------------------------------------
+   3. LAYOUT GENERAL
+   --------------------------------------------------------- */
+.pagina {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra superior que aparece en las páginas internas (lista, niveles, reportes) */
+.barra-superior {
+  background: var(--color-gris-pizarra);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.barra-superior__marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-blanco);
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.barra-superior__logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-vino);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-blanco);
+  font-size: 16px;
+}
+
+.barra-superior__usuario {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-crema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-marron);
+}
+
+.contenido {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  flex: 1;
+}
+
+.contenido__titulo {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.contenido__subtitulo {
+  font-size: 15px;
+  color: var(--color-marron);
+  margin-bottom: 24px;
+}
+
+
+/* ---------------------------------------------------------
+   4. BOTONES
+   .btn es la base; se combina con una segunda clase
+   para el color: .btn-primario, .btn-secundario, .btn-texto
+   --------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--radio-chico);
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--fuente-texto);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-primario {
+  background: var(--color-vino);
+  color: var(--color-blanco);
+}
+
+.btn-primario:hover {
+  background: var(--color-vino-hover);
+}
+
+.btn-primario:disabled {
+  background: var(--color-gris-deshabilitado);
+  color: var(--color-texto-deshabilitado);
+  cursor: not-allowed;
+}
+
+.btn-secundario {
+  background: var(--color-blanco);
+  color: var(--color-vino);
+  border: 1px solid var(--color-vino);
+}
+
+.btn-secundario:hover {
+  background: var(--color-salvia);
+}
+
+.btn-ancho-completo {
+  width: 100%;
+}
+
+
+/* ---------------------------------------------------------
+   5. INPUTS Y FORMULARIOS
+   --------------------------------------------------------- */
+.campo {
+  margin-bottom: 16px;
+}
+
+.campo__etiqueta {
+  display: block;
+  font-size: 15px;
+  color: var(--color-marron);
+  margin-bottom: 6px;
+}
+
+.campo__input {
+  width: 100%;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-chico);
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: var(--fuente-texto);
+  color: var(--color-negro);
+}
+
+.campo__input::placeholder {
+  color: #A6A39A;
+}
+
+
+/* ---------------------------------------------------------
+   6. TARJETAS (CARDS)
+   Se usan para alumnos, niveles, actividades, reportes...
+   --------------------------------------------------------- */
+.tarjeta {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-mediano);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Tarjeta que se puede seleccionar (alumno, nivel, actividad) */
+.tarjeta-seleccionable {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: var(--fuente-texto);
+  transition: border-color 0.15s ease;
+}
+
+.tarjeta-seleccionable.esta-seleccionada {
+  border: 2px solid var(--color-vino);
+}
+
+/* Fila de alumno en la lista (avatar + info + badge + indicador) */
+.fila-alumno {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  width: 100%;
+}
+
+.fila-alumno__info {
+  flex: 1;
+  text-align: left;
+  min-width: 0; /* permite que el texto/barra se encojan en vez de desbordar */
+}
+
+.fila-alumno__badge {
+  flex-shrink: 0;
+}
+
+.fila-alumno__indicador {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.tarjeta-icono {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+
+/* ---------------------------------------------------------
+   7. BADGES (etiquetas de estado, ej. "al día")
+   --------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-bien       { background: var(--color-estado-bien-fondo);      color: var(--color-estado-bien-texto); }
+.badge-progreso   { background: var(--color-estado-progreso-fondo);  color: var(--color-estado-progreso-texto); }
+.badge-atencion   { background: var(--color-estado-atencion-fondo);  color: var(--color-estado-atencion-texto); }
+
+
+/* ---------------------------------------------------------
+   8. AVATARES (iniciales del alumno en un círculo de color)
+   --------------------------------------------------------- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-blanco);
+  flex-shrink: 0;
+}
+
+.avatar-chico {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+
+/* ---------------------------------------------------------
+   9. BARRA DE PROGRESO
+   --------------------------------------------------------- */
+.progreso {
+  height: 6px;
+  border-radius: 4px;
+  background: #E1D9D3;
+  overflow: hidden;
+}
+
+.progreso__relleno {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-vino);
+}
+
+
+/* ---------------------------------------------------------
+   10. LOGIN / REGISTRO (panel dividido con logo)
+   --------------------------------------------------------- */
+.division {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 800px) {
+  .division {
+    grid-template-columns: 1fr;
+  }
+  .division__marca {
+    min-height: 240px;
+  }
+}
+
+.division__marca {
+  background: var(--color-gris-pizarra);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+}
+
+.division__logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-vino);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 28px;
+  color: var(--color-blanco);
+}
+
+.division__nombre {
+  font-size: 22px;
+  color: var(--color-blanco);
+  margin-bottom: 8px;
+}
+
+.division__descripcion {
+  font-size: 14px;
+  color: #EDEDF0;
+  max-width: 260px;
+}
+
+.division__formulario {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+}
+
+.division__formulario-interior {
+  max-width: 360px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+
+/* ---------------------------------------------------------
+   11. CUADRÍCULAS (grids) REUTILIZABLES
+   Se usan para el resumen de alumnos, los niveles y las
+   actividades. Al ser clases (y no estilos sueltos), podemos
+   controlar cómo se acomodan en pantallas chicas más abajo,
+   en la sección de RESPONSIVO.
+   --------------------------------------------------------- */
+.grid-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.grid-niveles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.grid-actividades {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+
+/* ---------------------------------------------------------
+   12. UTILIDADES VARIAS
+   --------------------------------------------------------- */
+.texto-centrado { text-align: center; }
+.texto-chico { font-size: 13px; color: var(--color-marron); }
+.margen-arriba-chico { margin-top: 8px; }
+.margen-arriba-mediano { margin-top: 20px; }
+.margen-abajo-chico { margin-bottom: 8px; }
+.margen-abajo-mediano { margin-bottom: 20px; }
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.espacio-entre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.oculto {
+  display: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   13. RESPONSIVO (pantallas de celular, menos de 700px)
+   Aquí es donde el sitio se adapta a móvil: las cuadrículas
+   pasan de varias columnas a una sola, los espacios se
+   reducen un poco, y la tarjeta de alumno se acomoda para
+   no salirse de la pantalla.
+   --------------------------------------------------------- */
+@media (max-width: 700px) {
+
+  .barra-superior {
+    padding: 14px 16px;
+  }
+
+  .contenido {
+    padding: 20px 16px 48px;
+  }
+
+  .contenido__titulo {
+    font-size: 19px;
+  }
+
+  /* Las 3 cuadrículas pasan a una sola columna */
+  .grid-resumen,
+  .grid-niveles,
+  .grid-actividades {
+    grid-template-columns: 1fr;
+  }
+
+  /* La tarjeta de "agregar alumno" + título se apilan en vez
+     de quedar lado a lado */
+  .espacio-entre {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* En la fila de cada alumno, el badge de estado pasa a una
+     segunda línea si ya no cabe junto al nombre */
+  .fila-alumno {
+    flex-wrap: wrap;
+  }
+
+  .fila-alumno__badge {
+    margin-left: 54px; /* alinea con el texto, debajo del avatar */
+  }
+}
+
+/* Pantallas muy chicas (celulares angostos, ~360px o menos) */
+@media (max-width: 400px) {
+  .division__formulario {
+    padding: 32px 24px;
+  }
+}

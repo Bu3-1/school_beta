@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Bigotes · Ingreso de maestros</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<main class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <img src="assets/bookie-face.png" alt="">
+      <div>
+        <h1>Ruta Bigotes</h1>
+        <span class="tag">Panel de maestros</span>
+      </div>
+    </div>
+    <p class="auth-subtitle">Ingresa para acompañar a tus alumnos en su ruta de lectura.</p>
+
+    <form autocomplete="off">
+      <div class="field">
+        <label for="correo">Correo institucional</label>
+        <div class="input-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4V6Z" stroke="#9eb6c2" stroke-width="2" stroke-linejoin="round"/><path d="m4 7 8 6 8-6" stroke="#9eb6c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="correo" type="email" placeholder="tu.nombre@escuela.edu">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="clave">Contraseña</label>
+        <div class="input-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="3" stroke="#9eb6c2" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="#9eb6c2" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="clave" type="password" placeholder="Tu contraseña">
+        </div>
+      </div>
+
+      <label class="check-row">
+        <input type="checkbox">
+        Recuérdame en este dispositivo
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block">Ingresar al panel</button>
+    </form>
+
+    <a href="#" class="help-link">¿Olvidaste tu contraseña?</a>
+    <p class="auth-foot">¿Aún no tienes cuenta? <a href="registro-maestros.html">Regístrate aquí</a></p>
+  </div>
+</main>
+
+</body>
+</html>

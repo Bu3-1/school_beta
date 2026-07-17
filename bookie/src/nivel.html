@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Feliz — Selecciona el nivel</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="pagina">
+
+  <div class="barra-superior">
+    <a href="alumnos.html" class="barra-superior__marca">
+      <span class="barra-superior__logo">📖</span>
+      Aula Feliz
+    </a>
+    <div class="barra-superior__usuario">MP</div>
+  </div>
+
+  <div class="contenido">
+
+    <div id="fichaAlumno" class="fila margen-abajo-chico"></div>
+
+    <h1 class="contenido__titulo">Selecciona el nivel</h1>
+    <p class="contenido__subtitulo">Elige la etapa de lectoescritura para comenzar la actividad</p>
+
+    <div id="listaNiveles" class="grid-niveles"></div>
+
+    <p style="margin-top:24px;">
+      <a href="alumnos.html">&larr; Volver a la lista de alumnos</a>
+    </p>
+
+  </div>
+
+</div>
+
+<script src="js/datos.js"></script>
+<script>
+  const idAlumno = obtenerParametro('id');
+  const alumno = buscarAlumno(idAlumno);
+
+  const NIVELES = [
+    { nombre: "Presilábico",         descripcion: "Dibujos y garabatos como representación" },
+    { nombre: "Silábico",            descripcion: "Una letra representa una sílaba" },
+    { nombre: "Silábico alfabético", descripcion: "Combina sílabas con letras sueltas" },
+    { nombre: "Alfabético",          descripcion: "Cada letra corresponde a un sonido" }
+  ];
+
+  if (alumno) {
+    document.getElementById('fichaAlumno').innerHTML = `
+      <div class="avatar avatar-chico" style="background:${alumno.color};">${alumno.iniciales}</div>
+      <p class="texto-chico" style="margin:0;">${alumno.nombre} · ${alumno.grupo}</p>
+    `;
+  }
+
+  document.getElementById('listaNiveles').innerHTML = NIVELES.map(n => {
+    const estilo = ESTILO_NIVEL[n.nombre];
+    const esNivelActual = alumno && alumno.nivel === n.nombre;
+    return `
+      <button
+        class="tarjeta tarjeta-seleccionable ${esNivelActual ? 'esta-seleccionada' : ''}"
+        style="padding:22px 18px; display:flex; flex-direction:column; gap:10px; position:relative;"
+        onclick="irAActividades('${n.nombre}')"
+      >
+        ${esNivelActual ? `<span class="badge badge-atencion" style="position:absolute; top:12px; right:12px;">nivel actual</span>` : ''}
+        <div class="tarjeta-icono" style="background:${estilo.fondo}; color:${estilo.texto};">${estilo.icono}</div>
+        <div style="text-align:left;">
+          <p style="font-size:15px; font-weight:600; margin:0 0 2px;">${n.nombre}</p>
+          <p style="font-size:12px; color:var(--color-marron); margin:0;">${n.descripcion}</p>
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  function irAActividades(nivel) {
+    window.location.href = `actividades.html?id=${idAlumno}&nivel=${encodeURIComponent(nivel)}`;
+  }
+</script>
+
+</body>
+</html>

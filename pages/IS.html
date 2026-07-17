@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookie — Panel del educador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-cream: #F1ECE2;
+    --card: #FBF9F4;
+    --lavender: #B6AFC9;
+    --lavender-deep: #8C82A6;
+    --sage: #AABC9C;
+    --sage-deep: #7F9770;
+    --dustyblue: #85A2B2;
+    --dustyblue-deep: #5E7C8C;
+    --plum: #4B4560;
+    --ink: #3B3644;
+    --ink-soft: #6B6478;
+    --line: #E1DACB;
+    --focus: #7F9770;
+    --radius-lg: 28px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--bg-cream);
+    font-family: 'Nunito', sans-serif;
+    color: var(--ink);
+  }
+
+  .wrap{
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: stretch;
+  }
+
+  /* ---------- LEFT PANEL ---------- */
+  .stage{
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 140% at 20% 15%, #C7C1D8 0%, transparent 55%),
+      radial-gradient(120% 140% at 85% 90%, #93B08A 0%, transparent 50%),
+      linear-gradient(160deg, var(--lavender) 0%, var(--dustyblue) 62%, var(--sage) 100%);
+    display:flex;
+    flex-direction:column;
+    justify-content: space-between;
+    padding: 48px 52px;
+    color: #fff;
+  }
+
+  .blob{
+    position:absolute;
+    border-radius: 50%;
+    opacity: 0.16;
+    background: #fff;
+  }
+  .blob.b1{ width:420px; height:420px; top:-140px; left:-120px; }
+  .blob.b2{ width:260px; height:260px; bottom:-90px; right:-60px; background:#2F2A3D; opacity:.10;}
+  .blob.b3{ width:150px; height:150px; top:38%; right:8%; background:#fff; opacity:.10; }
+
+  .brand{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+  }
+  .brand .dot{
+    width:10px; height:10px; border-radius:50%;
+    background:#fff; opacity:.85;
+  }
+
+  .hero{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap: 6px;
+    margin: 0 auto;
+  }
+
+  .mascot-holder{
+    width: 500px;
+    height: 500px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 6px;
+    animation: float 6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .mascot-holder{ animation: none; }
+  }
+  @keyframes float{
+    0%,100%{ transform: translateY(0px); }
+    50%{ transform: translateY(-10px); }
+  }
+
+  .hero h1{
+    font-family:'Fredoka', sans-serif;
+    font-weight:700;
+    font-size: 2.15rem;
+    margin: 4px 0 2px;
+    letter-spacing: -0.01em;
+  }
+  .hero p{
+    max-width: 360px;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.92);
+    font-weight: 500;
+  }
+
+  .footnote{
+    position:relative;
+    z-index:2;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.78);
+    font-weight: 600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .footnote svg{ flex-shrink:0; }
+
+  /* ---------- RIGHT PANEL ---------- */
+  .panel{
+    background: var(--card);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px;
+  }
+
+  .form-card{
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .eyebrow{
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--sage-deep);
+    margin: 0 0 10px;
+  }
+
+  .form-card h2{
+    font-family:'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1.9rem;
+    margin: 0 0 8px;
+    color: var(--plum);
+  }
+  .form-card > p.sub{
+    margin: 0 0 30px;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  label{
+    display:block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 7px;
+  }
+
+  .field{ margin-bottom: 18px; }
+
+  .input-shell{
+    position: relative;
+    display:flex;
+    align-items:center;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: var(--radius-sm);
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  .input-shell:focus-within{
+    border-color: var(--focus);
+    box-shadow: 0 0 0 4px rgba(127,151,112,0.16);
+  }
+  .input-shell svg{
+    margin-left: 14px;
+    flex-shrink:0;
+    color: var(--ink-soft);
+  }
+  .input-shell input{
+    width:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    padding: 13px 14px;
+    font-size: 0.98rem;
+    font-family:'Nunito', sans-serif;
+    color: var(--ink);
+  }
+  .input-shell input::placeholder{ color: #B3AEA0; }
+
+  .toggle-pass{
+    margin-right: 10px;
+    background:none;
+    border:0;
+    cursor:pointer;
+    color: var(--ink-soft);
+    display:flex;
+    padding: 4px;
+    border-radius: 6px;
+  }
+  .toggle-pass:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin: 4px 0 26px;
+    font-size: 0.88rem;
+  }
+
+  .remember{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .remember input{
+    width:17px; height:17px;
+    accent-color: var(--sage-deep);
+    cursor:pointer;
+  }
+
+  a.link{
+    color: var(--dustyblue-deep);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  a.link:hover{ text-decoration: underline; }
+  a.link:focus-visible{ outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 3px; }
+
+  .btn-primary{
+    width:100%;
+    border:0;
+    cursor:pointer;
+    background: var(--plum);
+    color: #fff;
+    font-family:'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    transition: transform .12s ease, background .18s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .btn-primary:hover{ background:#3a3550; }
+  .btn-primary:active{ transform: translateY(1px); }
+  .btn-primary:focus-visible{ outline: 3px solid var(--sage); outline-offset: 3px; }
+
+  .signup{
+    text-align:center;
+    margin-top: 22px;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .helper-note{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background: #F3F0E6;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-top: 28px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .helper-note svg{ flex-shrink:0; margin-top:1px; color: var(--sage-deep); }
+
+  @media (max-width: 860px){
+    .wrap{ grid-template-columns: 1fr; }
+    .stage{ min-height: 300px; padding: 32px; }
+    .mascot-holder{ width:150px; height:150px; }
+    .hero h1{ font-size:1.6rem; }
+    .hero p{ display:none; }
+    .panel{ padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- LEFT: brand stage -->
+  <div class="stage">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+
+    <div class="brand">
+      <span class="dot"></span>
+      Bookie
+    </div>
+
+    <div class="hero">
+      <div class="mascot-holder">
+        <img src="Logo.png" alt="Bookie, el gato mascota de la plataforma, asomado sobre un libro abierto" style="width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 10px 18px rgba(47,42,61,0.18));">
+      </div>
+      <h1>¡Hola, educador!</h1>
+      <p>Entra a tu panel: Bookie acompaña a cada estudiante en su propio ritmo de lectura.</p>
+    </div>
+
+    <div class="footnote">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 15.5 4 9.5C4 6.5 6.5 4 9.5 4C11 4 12 5 12 5C12 5 13 4 14.5 4C17.5 4 20 6.5 20 9.5C20 15.5 12 21 12 21Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Diseñado con calma, para cada forma de aprender
+    </div>
+  </div>
+
+  <!-- RIGHT: login form -->
+  <div class="panel">
+    <div class="form-card">
+      <p class="eyebrow">Panel del educador</p>
+      <h2>Bienvenido de nuevo</h2>
+      <p class="sub">Ingresa tus datos para continuar con tus grupos y actividades.</p>
+
+      <form onsubmit="return false;">
+        <div class="field">
+          <label for="email">Correo institucional</label>
+          <div class="input-shell">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6H20V18H4V6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 7L12 13L20 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <input id="email" type="email" placeholder="tu.nombre@escuela.edu" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pass">Contraseña</label>
+          <div class="input-shell">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7A4 4 0 0116 7V10" stroke="currentColor" stroke-width="1.8"/></svg>
+            <input id="pass" type="password" placeholder="Tu contraseña" autocomplete="current-password" style="flex:1;">
+            <button type="button" class="toggle-pass" aria-label="Mostrar contraseña" onclick="
+              const i=document.getElementById('pass');
+              i.type = i.type==='password' ? 'text' : 'password';
+            ">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 12C2 12 5.5 5.5 12 5.5C18.5 5.5 22 12 22 12C22 12 18.5 18.5 12 18.5C5.5 18.5 2 12 2 12Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox">
+            Recuérdame
+          </label>
+          <a class="link" href="#">¿La olvidaste?</a>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          Entrar al panel
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+
+      <p class="signup">¿Tu escuela es nueva? <a class="link" href="#">Regístrate aquí</a></p>
+
+      <div class="helper-note">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 11V16.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="8" r="1" fill="currentColor"/></svg>
+        <span>¿Prefieres alto contraste o texto más grande? Podrás ajustarlo dentro del panel, en Preferencias.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

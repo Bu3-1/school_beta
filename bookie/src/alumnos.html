@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Feliz — Tus alumnos</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="pagina">
+
+  <div class="barra-superior">
+    <a href="alumnos.html" class="barra-superior__marca">
+      <span class="barra-superior__logo">📖</span>
+      Aula Feliz
+    </a>
+    <div class="barra-superior__usuario">MP</div>
+  </div>
+
+  <div class="contenido">
+
+    <div class="espacio-entre margen-abajo-mediano">
+      <div>
+        <h1 class="contenido__titulo">Tus alumnos</h1>
+        <p class="contenido__subtitulo" style="margin-bottom:0;">Selecciona un alumno para continuar</p>
+      </div>
+      <button class="btn btn-primario" onclick="alert('Aquí iría tu formulario para agregar un alumno nuevo.')">
+        + Agregar alumno
+      </button>
+    </div>
+
+    <!-- Resumen rápido -->
+    <div id="resumen" class="grid-resumen margen-abajo-mediano"></div>
+
+    <!-- Lista de alumnos (se llena con JavaScript desde datos.js) -->
+    <div id="listaAlumnos" style="display:flex; flex-direction:column; gap:10px;"></div>
+
+    <button id="btnContinuar" class="btn btn-primario btn-ancho-completo margen-arriba-mediano" disabled>
+      Continuar
+    </button>
+
+  </div>
+
+</div>
+
+<script src="js/datos.js"></script>
+<script>
+  let idSeleccionado = null;
+
+  function pintarResumen() {
+    const conteo = { "al día": 0, "en progreso": 0, "requiere apoyo": 0 };
+    ALUMNOS.forEach(a => conteo[a.estado]++);
+
+    document.getElementById('resumen').innerHTML = `
+      <div class="badge-bien" style="border-radius:12px; padding:12px 14px;">
+        <p style="font-size:12px; margin:0 0 2px;">Al día</p>
+        <p style="font-size:18px; font-weight:600; margin:0;">${conteo["al día"]}</p>
+      </div>
+      <div class="badge-progreso" style="border-radius:12px; padding:12px 14px;">
+        <p style="font-size:12px; margin:0 0 2px;">En progreso</p>
+        <p style="font-size:18px; font-weight:600; margin:0;">${conteo["en progreso"]}</p>
+      </div>
+      <div class="badge-atencion" style="border-radius:12px; padding:12px 14px;">
+        <p style="font-size:12px; margin:0 0 2px;">Requiere apoyo</p>
+        <p style="font-size:18px; font-weight:600; margin:0;">${conteo["requiere apoyo"]}</p>
+      </div>
+    `;
+  }
+
+  function pintarLista() {
+    const contenedor = document.getElementById('listaAlumnos');
+    contenedor.innerHTML = ALUMNOS.map(a => {
+      const seleccionada = idSeleccionado === a.id;
+      const estado = ESTILO_ESTADO[a.estado].clase;
+      return `
+        <button
+          class="tarjeta tarjeta-seleccionable ${seleccionada ? 'esta-seleccionada' : ''} fila-alumno"
+          onclick="seleccionarAlumno(${a.id})"
+        >
+          <div class="avatar" style="background:${a.color};">${a.iniciales}</div>
+          <div class="fila-alumno__info">
+            <p style="font-size:14px; font-weight:600; margin:0;">${a.nombre}</p>
+            <p style="font-size:12px; color:var(--color-marron); margin:0 0 6px;">${a.grupo} · ${a.nivel}</p>
+            <div class="progreso">
+              <div class="progreso__relleno" style="width:${a.progreso}%; background:${a.color};"></div>
+            </div>
+          </div>
+          <span class="badge ${estado} fila-alumno__badge">${a.estado}</span>
+          <span class="fila-alumno__indicador" style="color:${seleccionada ? 'var(--color-vino)' : 'var(--color-borde)'};">
+            ${seleccionada ? '●' : '○'}
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function seleccionarAlumno(id) {
+    idSeleccionado = id;
+    pintarLista();
+    const boton = document.getElementById('btnContinuar');
+    boton.disabled = false;
+  }
+
+  document.getElementById('btnContinuar').addEventListener('click', () => {
+    if (idSeleccionado) {
+      window.location.href = `nivel.html?id=${idSeleccionado}`;
+    }
+  });
+
+  pintarResumen();
+  pintarLista();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Bigotes · Progreso</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="bookie-home" href="niveles.html">
+      <img src="assets/bookie-face.png" alt="">
+      <span class="brand-text"><strong>Ruta Bigotes</strong><span>Panel de maestros</span></span>
+    </a>
+
+    <nav class="topbar-nav">
+      <a href="niveles.html">Niveles</a>
+      <a href="progreso.html" class="active">Progreso</a>
+    </nav>
+
+    <div class="topbar-spacer"></div>
+
+    <a class="profile-chip" href="#">
+      <span class="avatar">MG</span>
+      Miss Gaby
+    </a>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head" style="text-align:left; padding-left:2px;">
+    <h2>Progreso de tu grupo</h2>
+    <p>Revisa cómo avanza cada alumno en escritura, lectura y comprensión lectora.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters">
+      <select aria-label="Filtrar por nivel">
+        <option>Todos los niveles</option>
+        <option>Presilábicos</option>
+        <option>Silábicos</option>
+        <option>Silábico-Alfabéticos</option>
+        <option>Alfabéticos</option>
+      </select>
+      <select aria-label="Filtrar por grupo">
+        <option>Todos los grupos</option>
+        <option>Grupo A</option>
+        <option>Grupo B</option>
+      </select>
+    </div>
+    <button class="btn btn-secondary">Exportar reporte</button>
+  </div>
+
+  <div class="student-list" id="listaAlumnos"></div>
+</main>
+
+<script>
+  const alumnos = [
+    { nombre:'Emilia Torres', nivel:'Silábicos', ultima:'Hace 1 día', escritura:70, lectura:55, comprension:40 },
+    { nombre:'Mateo Rivas', nivel:'Presilábicos', ultima:'Hace 3 días', escritura:30, lectura:25, comprension:10 },
+    { nombre:'Sofía Camacho', nivel:'Silábico-Alfabéticos', ultima:'Hoy', escritura:85, lectura:78, comprension:60 },
+    { nombre:'Diego Paredes', nivel:'Silábicos', ultima:'Hace 2 días', escritura:50, lectura:60, comprension:35 },
+    { nombre:'Valentina Ruiz', nivel:'Alfabéticos', ultima:'Hoy', escritura:92, lectura:88, comprension:80 },
+  ];
+
+  function iniciales(nombre){
+    return nombre.split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
+  }
+
+  const lista = document.getElementById('listaAlumnos');
+  alumnos.forEach(a => {
+    const row = document.createElement('article');
+    row.className = 'student-row';
+    row.innerHTML = `
+      <div class="student-id">
+        <span class="student-avatar">${iniciales(a.nombre)}</span>
+        <div>
+          <div class="student-name">${a.nombre}</div>
+          <div class="student-meta">Última actividad: ${a.ultima}</div>
+        </div>
+      </div>
+
+      <div class="student-skills">
+        <div class="skill-meter" data-skill="escritura">
+          <div class="label-row"><span>Escritura</span><span>${a.escritura}%</span></div>
+          <div class="bar"><span style="width:${a.escritura}%"></span></div>
+        </div>
+        <div class="skill-meter" data-skill="lectura">
+          <div class="label-row"><span>Lectura</span><span>${a.lectura}%</span></div>
+          <div class="bar"><span style="width:${a.lectura}%"></span></div>
+        </div>
+        <div class="skill-meter" data-skill="comprension">
+          <div class="label-row"><span>Comprensión</span><span>${a.comprension}%</span></div>
+          <div class="bar"><span style="width:${a.comprension}%"></span></div>
+        </div>
+      </div>
+
+      <span class="level-badge">${a.nivel}</span>
+    `;
+    lista.appendChild(row);
+  });
+</script>
+
+</body>
+</html>
