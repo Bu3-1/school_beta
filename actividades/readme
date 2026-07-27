@@ -1,0 +1,20 @@
+para iniciar, solo pon 
+npm intsall
+
+luego, creas el .env
+DATABASE_URL="postgresql://postgres:contraseña@localhost:5432/Bookie"
+
+JWT_SECRET=ese no vdd, lo mande en los env de whatsapp
+PORT= puerto diferente entre servicios
+
+luego creas el prisma y pasas a bd
+
+npx prisma migrate dev --name init
+
+si hiciste cambios al schema:
+npx prisma db pull
+
+haz esto cada que cambies algo o no se:
+npx prisma generate
+
+con eso funciona, es necesario antes de todo.
