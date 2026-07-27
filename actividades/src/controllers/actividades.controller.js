@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma.js";
+import prisma from "../../../alumnos/src/lib/prisma.js";
 
 export const getActividades = async (req, res) => {
   try {
