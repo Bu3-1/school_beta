@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Silábico-Alfabético - Lectura 1</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    .palabra-box { font-size: 38px; font-weight: bold; color: #fd7e14; background: #fff3cd; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #ffe8a1; }
+    .grid-imagenes { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+    .btn-img { font-size: 65px; padding: 15px; border: 2px solid #fd7e14; background: white; border-radius: 10px; cursor: pointer; }
+    .btn-img:hover { background: #ffe8a1; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>📖 Lee la palabra compleja</h2>
+    <div class="palabra-box" id="txtPalabra">TREBOL</div>
+
+    <div class="grid-imagenes" id="contenedorImagenes"></div>
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 8;
+
+    if (!token || !alumno) window.location.href = "index.html";
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    const ejercicios = [
+      { palabra: "TRÉBOL", correcta: "☘️", opciones: ["☘️", "🌲", "🌸", "🍁"] },
+      { palabra: "BRUJA", correcta: "🧙‍♀️", opciones: ["🧙‍♀️", "👸", "🧚‍♀️", "👩"] },
+      { palabra: "TREN", correcta: "🚂", opciones: ["🚂", "🚗", "✈️", "⛵"] }
+    ];
+
+    let indiceActual = 0, aciertos = 0;
+
+    function cargar() {
+      if (indiceActual >= ejercicios.length) return finalizar();
+      const ej = ejercicios[indiceActual];
+      document.getElementById("txtPalabra").innerText = ej.palabra;
+
+      const cont = document.getElementById("contenedorImagenes");
+      cont.innerHTML = "";
+      ej.opciones.sort(() => Math.random() - 0.5).forEach(img => {
+        const btn = document.createElement("button");
+        btn.className = "btn-img";
+        btn.innerText = img;
+        btn.onclick = () => {
+          if (img === ej.correcta) aciertos++;
+          indiceActual++;
+          document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${ejercicios.length}`;
+          cargar();
+        };
+        cont.appendChild(btn);
+      });
+    }
+
+    async function finalizar() {
+      const pct = Math.round((aciertos / ejercicios.length) * 100);
+      document.getElementById("contenedorImagenes").innerHTML = `<div style="grid-column: span 2;"><h3>Puntaje: ${pct}%</h3></div>`;
+      await fetch("http://localhost:3000/api/intentosActividades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ id_alumno: alumno.id, id_actividad: ID_ACTIVIDAD, puntaje: pct })
+      });
+    }
+    cargar();
+  </script>
+</body>
+</html>

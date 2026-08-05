@@ -1,28 +1,4 @@
-/* =========================================================
-   AULA FELIZ — HOJA DE ESTILOS COMPARTIDA
-   Este archivo controla el diseño de TODAS las páginas.
-   Está dividido en secciones para que sea fácil de leer:
 
-   1. Variables de color (tu paleta)
-   2. Reset básico y tipografía general
-   3. Layout general (contenedores)
-   4. Componentes: botones
-   5. Componentes: inputs / formularios
-   6. Componentes: tarjetas (cards)
-   7. Componentes: badges (etiquetas de estado)
-   8. Componentes: avatares
-   9. Componentes: barra de progreso
-   10. Página de login/registro (panel dividido)
-   11. Utilidades varias
-   ========================================================= */
-
-
-/* ---------------------------------------------------------
-   1. VARIABLES DE COLOR
-   Todo el color del sitio sale de aquí. Si un día quieres
-   cambiar un tono, solo lo cambias en esta lista y se
-   actualiza en TODAS las páginas automáticamente.
-   --------------------------------------------------------- */
 :root {
   /* Colores base (extraídos de la imagen del gato) */
   --color-gris-pizarra: #8C93A1;

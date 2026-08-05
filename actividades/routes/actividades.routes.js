@@ -5,15 +5,21 @@ import {
   createActividad,
   updateActividad,
   deleteActividad,
-} from "../controllers/actividades.controller.js";
-import { requireAuth } from "../middlewares/auth.middleware.js";
+  getReporteAlumnos,
+  getHistorialAlumno,
+} from "../src/controllers/actividades.controller.js";
 
 const router = Router();
 
-router.get("/", requireAuth, getActividades);
-router.get("/:id", requireAuth, getActividadById);
-router.post("/", requireAuth, createActividad);
-router.put("/:id", requireAuth, updateActividad);
-router.delete("/:id", requireAuth, deleteActividad);
+// Rutas de reporte para el maestro
+router.get("/reportes/alumnos", getReporteAlumnos);
+router.get("/reportes/alumno/:id_alumno", getHistorialAlumno);
+
+// Rutas del CRUD de actividades
+router.get("/", getActividades);
+router.get("/:id", getActividadById);
+router.post("/", createActividad);
+router.put("/:id", updateActividad);
+router.delete("/:id", deleteActividad);
 
 export default router;

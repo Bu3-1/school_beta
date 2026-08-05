@@ -25,7 +25,11 @@ export const createIntento = async (req, res) => {
   try {
     const { id_alumno, id_actividad, puntaje } = req.body;
     const data = await prisma.intentos_actividades.create({
-      data: { id_alumno, id_actividad, puntaje },
+      data: {
+        id_alumno: Number(id_alumno),
+        id_actividad: Number(id_actividad),
+        puntaje: Number(puntaje),
+      },
     });
     res.status(201).json(data);
   } catch (err) {
@@ -38,7 +42,11 @@ export const updateIntento = async (req, res) => {
     const { id_alumno, id_actividad, puntaje } = req.body;
     const data = await prisma.intentos_actividades.update({
       where: { id: Number(req.params.id) },
-      data: { id_alumno, id_actividad, puntaje },
+      data: {
+        ...(id_alumno && { id_alumno: Number(id_alumno) }),
+        ...(id_actividad && { id_actividad: Number(id_actividad) }),
+        ...(puntaje !== undefined && { puntaje: Number(puntaje) }),
+      },
     });
     res.json(data);
   } catch (err) {

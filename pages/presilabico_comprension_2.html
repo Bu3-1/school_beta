@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presilábico - Comprensión 2</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    .lectura-box { background: #fff3cd; border: 3px solid #ffc107; border-radius: 12px; padding: 20px; margin: 20px 0; font-size: 24px; font-weight: bold; color: #856404; line-height: 1.5; }
+    .pregunta-titulo { font-size: 20px; color: #333; margin: 15px 0; font-weight: bold; }
+    .opciones { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+    .btn-opcion { padding: 15px; font-size: 20px; font-weight: bold; border: 2px solid #ffc107; background: white; color: #856404; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn-opcion:hover { background: #ffc107; color: white; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>📖 Lectura 2: Cuentos Cortos</h2>
+    <div class="lectura-box" id="boxLectura"></div>
+    <div class="pregunta-titulo" id="txtPregunta"></div>
+    <div class="opciones" id="contenedorOpciones"></div>
+
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 3;
+
+    if (!token || !alumno) window.location.href = "index.html";
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    const lecturas = [
+      {
+        texto: "☀️ El sol brilla mucho.<br>🌧️ Luego cae la lluvia y sale el arcoíris 🌈.",
+        preguntas: [
+          { q: "¿Qué brilla en el cielo?", correcta: "El sol ☀️", opciones: ["El sol ☀️", "La luna 🌙", "Una estrella 🌟"] },
+          { q: "¿Qué sale después de la lluvia?", correcta: "El arcoíris 🌈", opciones: ["El arcoíris 🌈", "Un avión ✈️", "La nieve ❄️"] }
+        ]
+      }
+    ];
+
+    let lecturaIndex = 0, preguntaIndex = 0, aciertos = 0;
+    let totalPreguntas = lecturas[0].preguntas.length;
+
+    function cargarPregunta() {
+      if (lecturaIndex >= lecturas.length) return finalizarJuego();
+
+      const lActual = lecturas[lecturaIndex];
+      document.getElementById("boxLectura").innerHTML = lActual.texto;
+
+      const pActual = lActual.preguntas[preguntaIndex];
+      document.getElementById("txtPregunta").innerText = pActual.q;
+
+      const cont = document.getElementById("contenedorOpciones");
+      cont.innerHTML = "";
+
+      pActual.opciones.sort(() => Math.random() - 0.5).forEach(opc => {
+        const btn = document.createElement("button");
+        btn.className = "btn-opcion";
+        btn.innerText = opc;
+        btn.onclick = () => {
+          if (opc === pActual.correcta) aciertos++;
+          preguntaIndex++;
+          if (preguntaIndex >= lActual.preguntas.length) { preguntaIndex = 0; lecturaIndex++; }
+          document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${totalPreguntas}`;
+          cargarPregunta();
+        };
+        cont.appendChild(btn);
+      });
+    }
+
+    async function finalizarJuego() {
+      const pct = Math.round((aciertos / totalPreguntas) * 100);
+      document.getElementById("boxLectura").innerText = "🏆 ¡Lectura completada!";
+      document.getElementById("txtPregunta").innerText = "";
+      document.getElementById("contenedorOpciones").innerHTML = `<h3>Puntaje: ${pct}%</h3>`;
+      
+      await fetch("http://localhost:3000/api/intentosActividades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ id_alumno: alumno.id, id_actividad: ID_ACTIVIDAD, puntaje: pct })
+      });
+    }
+    cargarPregunta();
+  </script>
+</body>
+</html>

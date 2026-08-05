@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Silábico - Escritura 1</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    .imagen-ejercicio { font-size: 80px; margin: 10px 0; }
+    .pizarra { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #fd7e14; background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border: 2px solid #ffeba2; }
+    .opciones { display: flex; justify-content: center; gap: 12px; margin-top: 15px; }
+    .btn-silaba { padding: 15px 20px; font-size: 22px; font-weight: bold; border: 2px solid #fd7e14; background: white; color: #fd7e14; border-radius: 8px; cursor: pointer; }
+    .btn-silaba:hover { background: #fd7e14; color: white; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>✏️ ¡Completa la Sílaba Faltante!</h2>
+    <div class="imagen-ejercicio" id="emojiIcono">🐸</div>
+    <div class="pizarra" id="txtPalabra">RA - <span style="color:#007bff">?</span></div>
+
+    <div class="opciones" id="contenedorOpciones"></div>
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 4; // Asegúrate de vincular con ID de tu BD
+
+    if (!token || !alumno) window.location.href = "index.html";
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    const ejercicios = [
+      { emoji: "🐸", inicio: "RA", correcta: "NA", opciones: ["NA", "TA", "PA"] },
+      { emoji: "🦆", inicio: "PA", correcta: "TO", opciones: ["LO", "TO", "SO"] },
+      { emoji: "🥛", inicio: "LE", correcta: "CHE", opciones: ["CHE", "MA", "NO"] }
+    ];
+
+    let indiceActual = 0, aciertos = 0;
+
+    function cargar() {
+      if (indiceActual >= ejercicios.length) return finalizar();
+      const ej = ejercicios[indiceActual];
+      document.getElementById("emojiIcono").innerText = ej.emoji;
+      document.getElementById("txtPalabra").innerHTML = `${ej.inicio} - <span style="color:#007bff">?</span>`;
+      
+      const cont = document.getElementById("contenedorOpciones");
+      cont.innerHTML = "";
+      ej.opciones.sort(() => Math.random() - 0.5).forEach(silaba => {
+        const btn = document.createElement("button");
+        btn.className = "btn-silaba";
+        btn.innerText = silaba;
+        btn.onclick = () => {
+          if (silaba === ej.correcta) aciertos++;
+          indiceActual++;
+          document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${ejercicios.length}`;
+          cargar();
+        };
+        cont.appendChild(btn);
+      });
+    }
+
+    async function finalizar() {
+      const pct = Math.round((aciertos / ejercicios.length) * 100);
+      document.getElementById("contenedorOpciones").innerHTML = `<h3>Puntaje: ${pct}%</h3>`;
+      await fetch("http://localhost:3000/api/intentosActividades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ id_alumno: alumno.id, id_actividad: ID_ACTIVIDAD, puntaje: pct })
+      });
+    }
+    cargar();
+  </script>
+</body>
+</html>
