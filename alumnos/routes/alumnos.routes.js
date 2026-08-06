@@ -5,8 +5,8 @@ import {
   createAlumno,
   updateAlumno,
   deleteAlumno,
-} from "../controllers/alumnos.controller.js";
-import { requireAuth } from "../middlewares/auth.middleware.js";
+} from "../src/controllers/alumnos.controller.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

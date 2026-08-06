@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro - Maestros</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; }
+    .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+    input, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+    button { background-color: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    button:hover { background-color: #218838; }
+    a { color: #007bff; text-decoration: none; font-weight: bold; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Crear Cuenta (Maestro)</h2>
+
+    <form id="formRegister">
+      <input type="text" id="regNombre" placeholder="Nombre completo" required>
+      <input type="email" id="regCorreo" placeholder="Correo electrónico" required>
+      <input type="password" id="regPassword" placeholder="Contraseña" required>
+      <button type="submit">Crear Cuenta</button>
+    </form>
+
+    <p style="text-align: center; font-size: 14px; margin-top: 15px;">
+      ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
+    </p>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:4000";
+
+    document.getElementById("formRegister").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById("regNombre").value;
+      const correo = document.getElementById("regCorreo").value;
+      const password = document.getElementById("regPassword").value;
+
+      try {
+        const res = await fetch(`${API_URL}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, correo, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("¡Registro exitoso! Redirigiendo al inicio de sesión...");
+          window.location.href = "login.html";
+        } else {
+          alert("Error: " + (data.error || "No se pudo registrar"));
+        }
+      } catch (err) {
+        alert("Error de conexión con el servidor de Login");
+      }
+    });
+  </script>
+</body>
+</html>

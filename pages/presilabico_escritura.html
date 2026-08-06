@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presilábico - Escritura</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    .imagen-ejercicio { font-size: 80px; margin: 15px 0; }
+    
+    /* Caja donde el niño "escribe" la palabra */
+    .palabra-box { font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #28a745; margin: 20px 0; }
+    .hueco { display: inline-block; width: 40px; border-bottom: 4px solid #333; color: #007bff; }
+
+    .opciones { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+    .btn-letra { padding: 15px 25px; font-size: 24px; border: 2px solid #fd7e14; background: white; color: #fd7e14; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .btn-letra:hover { background: #fd7e14; color: white; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>✏️ Actividad: Completa la Escritura</h2>
+    <p>Elige la letra correcta para empezar a escribir la palabra:</p>
+    
+    <div class="imagen-ejercicio" id="emojiIcono">🐱</div>
+    
+    <!-- Representación visual de la palabra por escribir -->
+    <div class="palabra-box" id="palabraDisplay">
+      <span class="hueco">?</span>ATO
+    </div>
+
+    <div class="opciones" id="contenedorOpciones">
+      <!-- Opciones de letras -->
+    </div>
+
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar a Categorías</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 1; // Ajusta según el ID en tu BD para escritura presilábica
+
+    if (!token || !alumno) {
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    // Ejercicios de completar la letra inicial para construir la palabra
+    const ejercicios = [
+      { emoji: "🐱", resto: "ATO", correcta: "G", opciones: ["G", "P", "M"] },
+      { emoji: "🦆", resto: "ATO", correcta: "P", opciones: ["S", "P", "L"] },
+      { emoji: "CASA", resto: "ASA", correcta: "C", opciones: ["C", "T", "B"], emojiIcono: "🏠" },
+      { emojiIcono: "🌙", resto: "UNA", correcta: "L", opciones: ["M", "L", "R"] }
+    ];
+
+    let indiceActual = 0;
+    let aciertos = 0;
+
+    function cargarEjercicio() {
+      if (indiceActual >= ejercicios.length) {
+        finalizarJuego();
+        return;
+      }
+
+      const ej = ejercicios[indiceActual];
+      document.getElementById("emojiIcono").innerText = ej.emojiIcono || ej.emoji;
+      document.getElementById("palabraDisplay").innerHTML = `<span class="hueco">?</span>${ej.resto}`;
+      
+      const contenedor = document.getElementById("contenedorOpciones");
+      contenedor.innerHTML = "";
+
+      ej.opciones.forEach(letra => {
+        const btn = document.createElement("button");
+        btn.className = "btn-letra";
+        btn.innerText = letra;
+        btn.onclick = () => verificarEscritura(letra, ej);
+        contenedor.appendChild(btn);
+      });
+    }
+
+    function verificarEscritura(letraElegida, ej) {
+      if (letraElegida === ej.correcta) {
+        aciertos++;
+        document.getElementById("palabraDisplay").innerHTML = `<span style="color:#28a745">${ej.correcta}</span>${ej.resto}`;
+        alert("¡Muy bien escrito! ✏️🎉");
+      } else {
+        alert("¡Esa letra no va ahí! Intenta con otra.");
+      }
+
+      indiceActual++;
+      document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${ejercicios.length}`;
+      setTimeout(cargarEjercicio, 500);
+    }
+
+    async function finalizarJuego() {
+      const porcentajeFinal = Math.round((aciertos / ejercicios.length) * 100);
+
+      document.getElementById("emojiIcono").innerText = "🏆";
+      document.getElementById("palabraDisplay").innerText = "¡Completado!";
+      document.getElementById("contenedorOpciones").innerHTML = `
+        <h3>Puntaje de Escritura: ${porcentajeFinal}%</h3>
+        <p>Guardando resultado...</p>
+      `;
+
+      try {
+        await fetch("http://localhost:3000/api/intentosActividades", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            id_alumno: alumno.id,
+            id_actividad: ID_ACTIVIDAD,
+            puntaje: porcentajeFinal
+          })
+        });
+      } catch (err) {
+        console.error("Error al guardar:", err);
+      }
+    }
+
+    cargarEjercicio();
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Alfabético - Comprensión 2</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    
+    .lectura-box {
+      background: #fff8e1; border: 3px solid #ffa000; border-radius: 12px;
+      padding: 20px; margin: 20px 0; font-size: 19px; color: #5d4037; line-height: 1.6; text-align: left;
+    }
+
+    .pregunta-titulo { font-size: 20px; color: #333; margin: 15px 0; font-weight: bold; }
+    .opciones { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+    .btn-opcion {
+      padding: 15px; font-size: 18px; font-weight: bold; border: 2px solid #ffa000;
+      background: white; color: #5d4037; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-opcion:hover { background: #ffa000; color: white; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>📖 Comprensión Informativa: "Las Abejas"</h2>
+
+    <div class="lectura-box" id="boxLectura">
+      Las abejas son insectos muy importantes para el planeta.<br>
+      Vuelan de flor en flor recolectando néctar para fabricar miel en sus colmenas.<br>
+      Además, al transportar el polen ayudan a que crezcan nuevas plantas y frutos.
+    </div>
+
+    <div class="pregunta-titulo" id="txtPregunta"></div>
+    <div class="opciones" id="contenedorOpciones"></div>
+
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 12;
+
+    if (!token || !alumno) window.location.href = "index.html";
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    const preguntas = [
+      { q: "1. ¿Qué recolectan las abejas de las flores?", correcta: "Néctar 🍯", opciones: ["Néctar 🍯", "Agua 💧", "Hojas 🍃"] },
+      { q: "2. ¿Dónde fabrican la miel?", correcta: "En sus colmenas 🐝", opciones: ["En sus colmenas 🐝", "En la tierra 🪴", "En los árboles 🌳"] },
+      { q: "3. ¿En qué ayudan al transportar el polen?", correcta: "A crecer nuevas plantas y frutos 🍎", opciones: ["A crecer nuevas plantas y frutos 🍎", "A hacer llover 🌧️", "A limpiar el aire 💨"] }
+    ];
+
+    let indiceActual = 0;
+    let aciertos = 0;
+
+    function cargarPregunta() {
+      if (indiceActual >= preguntas.length) {
+        finalizarJuego();
+        return;
+      }
+
+      const p = preguntas[indiceActual];
+      document.getElementById("txtPregunta").innerText = p.q;
+
+      const cont = document.getElementById("contenedorOpciones");
+      cont.innerHTML = "";
+
+      p.opciones.sort(() => Math.random() - 0.5).forEach(opc => {
+        const btn = document.createElement("button");
+        btn.className = "btn-opcion";
+        btn.innerText = opc;
+        btn.onclick = () => {
+          if (opc === p.correcta) { aciertos++; alert("¡Muy bien respondido! 🐝✨"); }
+          else { alert(`Respuesta incorrecta. La respuesta correcta era: ${p.correcta}`); }
+          
+          indiceActual++;
+          document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${preguntas.length}`;
+          cargarPregunta();
+        };
+        cont.appendChild(btn);
+      });
+    }
+
+    async function finalizarJuego() {
+      const pct = Math.round((aciertos / preguntas.length) * 100);
+
+      document.getElementById("boxLectura").innerText = "🏆 ¡Actividad de comprensión completada!";
+      document.getElementById("txtPregunta").innerText = "";
+      document.getElementById("contenedorOpciones").innerHTML = `
+        <h3>Puntaje Final: ${pct}%</h3>
+        <p>Guardando resultado en el expediente...</p>
+      `;
+
+      try {
+        await fetch("http://localhost:3000/api/intentosActividades", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ id_alumno: alumno.id, id_actividad: ID_ACTIVIDAD, puntaje: pct })
+        });
+      } catch (err) { console.error(err); }
+    }
+
+    cargarPregunta();
+  </script>
+</body>
+</html>

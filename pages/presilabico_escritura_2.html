@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presilábico - Escritura en Pizarra</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    .imagen-ejercicio { font-size: 80px; margin: 10px 0; }
+    
+    /* Pizarra donde el niño escribe */
+    .pizarra-escritura {
+      background: #222;
+      color: #33ff33;
+      font-size: 36px;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 8px;
+      padding: 15px;
+      border-radius: 8px;
+      min-height: 45px;
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 4px solid #fd7e14;
+    }
+
+    /* Teclado de letras para escribir */
+    .teclado { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; }
+    .btn-tecla {
+      width: 55px; height: 55px; font-size: 24px; font-weight: bold;
+      border: 2px solid #007bff; background: #e7f1ff; color: #007bff;
+      border-radius: 8px; cursor: pointer; transition: 0.1s;
+    }
+    .btn-tecla:active { transform: scale(0.92); background: #007bff; color: white; }
+    
+    .btn-accion { padding: 12px 20px; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-borrar { background: #dc3545; color: white; }
+    .btn-enviar { background: #28a745; color: white; margin-left: 10px; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>✏️ ¡Escribe la palabra!</h2>
+    <p>Usa los botones de letras para escribir cómo se llama la imagen:</p>
+    
+    <div class="imagen-ejercicio" id="emojiIcono">🐱</div>
+
+    <!-- Pizarra que muestra lo que el niño va escribiendo -->
+    <div class="pizarra-escritura" id="pizarraTexto">_ _ _</div>
+
+    <!-- Botones de Borrar / Enviar -->
+    <div>
+      <button class="btn-accion btn-borrar" onclick="borrarLetra()">⌫ Borrar</button>
+      <button class="btn-accion btn-enviar" onclick="comprobarEscritura()">✅ Listo</button>
+    </div>
+
+    <!-- Teclado dinámico de letras -->
+    <div class="teclado" id="contenedorTeclado"></div>
+
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 1; // ID registrado en tu BD
+
+    if (!token || !alumno) {
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    // Lista de palabras que el niño debe escribir
+    const ejercicios = [
+      { emoji: "🐱", palabraCorrecta: "GATO", letras: ["G", "A", "T", "O", "M", "S"] },
+      { emoji: "☀️", palabraCorrecta: "SOL", letras: ["S", "O", "L", "P", "R", "A"] },
+      { emoji: "🏠", palabraCorrecta: "CASA", letras: ["C", "A", "S", "M", "T", "O"] }
+    ];
+
+    let indiceActual = 0;
+    let aciertos = 0;
+    let textoEscrito = "";
+
+    function cargarEjercicio() {
+      if (indiceActual >= ejercicios.length) {
+        finalizarJuego();
+        return;
+      }
+
+      const ej = ejercicios[indiceActual];
+      textoEscrito = "";
+      document.getElementById("emojiIcono").innerText = ej.emoji;
+      actualizarPizarra();
+
+      // Generar teclado con las letras de la palabra + distracciones
+      const contenedor = document.getElementById("contenedorTeclado");
+      contenedor.innerHTML = "";
+
+      ej.letras.forEach(letra => {
+        const btn = document.createElement("button");
+        btn.className = "btn-tecla";
+        btn.innerText = letra;
+        btn.onclick = () => escribirLetra(letra);
+        contenedor.appendChild(btn);
+      });
+    }
+
+    function escribirLetra(letra) {
+      if (textoEscrito.length < 8) { // Límite de caracteres
+        textoEscrito += letra;
+        actualizarPizarra();
+      }
+    }
+
+    function borrarLetra() {
+      textoEscrito = textoEscrito.slice(0, -1);
+      actualizarPizarra();
+    }
+
+    function actualizarPizarra() {
+      const pizarra = document.getElementById("pizarraTexto");
+      pizarra.innerText = textoEscrito === "" ? "___" : textoEscrito;
+    }
+
+    function comprobarEscritura() {
+      const ej = ejercicios[indiceActual];
+
+      if (textoEscrito === ej.palabraCorrecta) {
+        aciertos++;
+        alert("¡Increíble! Escribiste la palabra perfectamente ✍️🎉");
+      } else {
+        alert(`Escribiste: "${textoEscrito}". La forma correcta era: "${ej.palabraCorrecta}". ¡A seguir practicando! 💪`);
+      }
+
+      indiceActual++;
+      document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${ejercicios.length}`;
+      cargarEjercicio();
+    }
+
+    async function finalizarJuego() {
+      const porcentajeFinal = Math.round((aciertos / ejercicios.length) * 100);
+
+      document.getElementById("emojiIcono").innerText = "🏆";
+      document.getElementById("pizarraTexto").innerText = "¡FIN!";
+      document.getElementById("contenedorTeclado").innerHTML = `
+        <h3>Puntaje final de Escritura: ${porcentajeFinal}%</h3>
+        <p>Guardando resultado en la base de datos...</p>
+      `;
+
+      try {
+        await fetch("http://localhost:3000/api/intentosActividades", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            id_alumno: alumno.id,
+            id_actividad: ID_ACTIVIDAD,
+            puntaje: porcentajeFinal
+          })
+        });
+      } catch (err) {
+        console.error("Error al guardar intento:", err);
+      }
+    }
+
+    cargarEjercicio();
+  </script>
+</body>
+</html>

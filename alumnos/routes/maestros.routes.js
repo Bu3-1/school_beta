@@ -4,8 +4,8 @@ import {
   getMaestroById,
   updateMaestro,
   deleteMaestro,
-} from "../controllers/maestros.controller.js";
-import { requireAuth } from "../middlewares/auth.middleware.js";
+} from "../src/controllers/maestros.controller.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

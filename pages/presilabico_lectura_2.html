@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Presilábico - Lectura 2</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 20px; text-align: center; }
+    .container { background: white; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
+    
+    .target-box { background: #e2e3e5; border: 3px dashed #6c757d; border-radius: 10px; padding: 15px; margin: 20px 0; }
+    .palabra-principal { font-size: 32px; font-weight: bold; color: #28a745; letter-spacing: 4px; }
+    
+    .opciones { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+    .btn-rima {
+      padding: 15px; font-size: 22px; font-weight: bold; border: 2px solid #28a745;
+      background: white; color: #28a745; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    }
+    .btn-rima:hover { background: #28a745; color: white; }
+    .btn-regresar { margin-top: 25px; background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span id="txtAlumno">👤 Alumno: ---</span>
+      <span id="txtPuntaje">⭐ Puntos: 0</span>
+    </div>
+
+    <h2>📖 ¿Qué palabra suena igual (rima)?</h2>
+    <p>Encuentra la palabra que termina igual que la palabra de la caja:</p>
+
+    <div class="target-box">
+      <span style="font-size: 50px;" id="emojiTarget">🐱</span><br>
+      <span class="palabra-principal" id="palabraTarget">GATO</span>
+    </div>
+
+    <div class="opciones" id="contenedorOpciones"></div>
+
+    <button class="btn-regresar" onclick="window.location.href='categorias.html'">⬅️ Regresar</button>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumnoActivo"));
+    const ID_ACTIVIDAD = 2; // Asegúrate de asignar el ID correspondiente a lectura
+
+    if (!token || !alumno) window.location.href = "index.html";
+    document.getElementById("txtAlumno").innerText = `👤 Alumno: ${alumno.nombre_anonimanizado}`;
+
+    const ejercicios = [
+      { emoji: "🐱", palabra: "GATO", correcta: "PATO 🦆", opciones: ["PATO 🦆", "SOL ☀️", "CASA 🏠"] },
+      { emoji: "🌙", palabra: "LUNA", correcta: "CUNA 🛏️", opciones: ["PERRO 🐶", "CUNA 🛏️", "PAN 🍞"] },
+      { emoji: "🧀", palabra: "QUESO", correcta: "HUESO 🦴", opciones: ["HUESO 🦴", "MAR 🌊", "GATO 🐱"] }
+    ];
+
+    let indiceActual = 0;
+    let aciertos = 0;
+
+    function cargarEjercicio() {
+      if (indiceActual >= ejercicios.length) {
+        finalizarJuego();
+        return;
+      }
+
+      const ej = ejercicios[indiceActual];
+      document.getElementById("emojiTarget").innerText = ej.emoji;
+      document.getElementById("palabraTarget").innerText = ej.palabra;
+
+      const contenedor = document.getElementById("contenedorOpciones");
+      contenedor.innerHTML = "";
+
+      ej.opciones.sort(() => Math.random() - 0.5).forEach(opcion => {
+        const btn = document.createElement("button");
+        btn.className = "btn-rima";
+        btn.innerText = opcion;
+        btn.onclick = () => verificarRespuesta(opcion, ej.correcta);
+        contenedor.appendChild(btn);
+      });
+    }
+
+    function verificarRespuesta(seleccion, correcta) {
+      if (seleccion === correcta) {
+        aciertos++;
+        alert("¡Excelente rima y lectura! 📖🎶");
+      } else {
+        alert("¡Upps! Escucha bien cómo terminan ambas palabras.");
+      }
+
+      indiceActual++;
+      document.getElementById("txtPuntaje").innerText = `⭐ Puntos: ${aciertos}/${ejercicios.length}`;
+      cargarEjercicio();
+    }
+
+    async function finalizarJuego() {
+      const porcentajeFinal = Math.round((aciertos / ejercicios.length) * 100);
+
+      document.getElementById("contenedorOpciones").innerHTML = `
+        <h3>Puntaje obtenido en Lectura Rimas: ${porcentajeFinal}%</h3>
+        <p>Guardando resultado...</p>
+      `;
+
+      try {
+        await fetch("http://localhost:3000/api/intentosActividades", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ id_alumno: alumno.id, id_actividad: ID_ACTIVIDAD, puntaje: porcentajeFinal })
+        });
+      } catch (err) { console.error(err); }
+    }
+
+    cargarEjercicio();
+  </script>
+</body>
+</html>
