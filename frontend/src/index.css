@@ -1,0 +1,158 @@
+/* 1. IMPORTACIÓN DE FUENTE DISLEXIA (Siempre debe ir en la línea 1) */
+@import url('https://fonts.cdnfonts.com/css/open-dyslexic');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm pastel palette — desaturated, soft */
+    --background: 36 28% 94%;
+    --foreground: 220 12% 28%;
+    --card: 36 20% 98%;
+    --card-foreground: 220 12% 28%;
+    --popover: 36 20% 98%;
+    --popover-foreground: 220 12% 28%;
+    --primary: 271 40% 38%;
+    --primary-foreground: 36 30% 97%;
+    --secondary: 36 16% 90%;
+    --secondary-foreground: 220 12% 28%;
+    --muted: 36 12% 92%;
+    --muted-foreground: 220 8% 45%;
+    --accent: 140 18% 58%;
+    --accent-foreground: 36 30% 97%;
+    --destructive: 5 28% 56%;
+    --destructive-foreground: 36 30% 97%;
+    --border: 36 12% 87%;
+    --input: 36 12% 87%;
+    --ring: 271 40% 38%;
+    --brand: 164 100% 27%;
+    --brand-foreground: 0 0% 100%;
+    --brand-purple: 271 40% 28%;
+    --brand-purple-dark: 272 42% 18%;
+    --radius: 0.875rem;
+    --font-heading: 'Fredoka', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fredoka', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --chart-1: 140 18% 58%;
+    --chart-2: 210 16% 52%;
+    --chart-3: 340 18% 58%;
+    --chart-4: 35 25% 60%;
+    --chart-5: 260 15% 58%;
+    --sidebar-background: 36 20% 96%;
+    --sidebar-foreground: 220 12% 28%;
+    --sidebar-primary: 210 16% 52%;
+    --sidebar-primary-foreground: 36 30% 97%;
+    --sidebar-accent: 36 12% 90%;
+    --sidebar-accent-foreground: 220 12% 28%;
+    --sidebar-border: 36 12% 88%;
+    --sidebar-ring: 210 16% 52%;
+  }
+
+  .dark {
+    --background: 220 14% 12%;
+    --foreground: 36 15% 88%;
+    --card: 220 14% 15%;
+    --card-foreground: 36 15% 88%;
+    --popover: 220 14% 15%;
+    --popover-foreground: 36 15% 88%;
+    --primary: 210 16% 60%;
+    --primary-foreground: 220 14% 12%;
+    --secondary: 220 10% 20%;
+    --secondary-foreground: 36 15% 88%;
+    --muted: 220 10% 18%;
+    --muted-foreground: 36 8% 60%;
+    --accent: 140 18% 50%;
+    --accent-foreground: 36 15% 88%;
+    --destructive: 5 28% 48%;
+    --destructive-foreground: 36 15% 88%;
+    --border: 220 10% 22%;
+    --input: 220 10% 22%;
+    --ring: 210 16% 60%;
+    --brand: 164 100% 32%;
+    --brand-foreground: 0 0% 100%;
+    --brand-purple: 271 40% 28%;
+    --brand-purple-dark: 272 42% 18%;
+    --chart-1: 140 18% 50%;
+    --chart-2: 210 16% 55%;
+    --chart-3: 340 18% 55%;
+    --chart-4: 35 25% 55%;
+    --chart-5: 260 15% 55%;
+    --sidebar-background: 220 14% 10%;
+    --sidebar-foreground: 36 15% 85%;
+    --sidebar-primary: 210 16% 60%;
+    --sidebar-primary-foreground: 220 14% 12%;
+    --sidebar-accent: 220 10% 18%;
+    --sidebar-accent-foreground: 36 15% 88%;
+    --sidebar-border: 220 10% 20%;
+    --sidebar-ring: 210 16% 60%;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    background-image: radial-gradient(ellipse 80% 50% at 50% -10%, hsl(36 30% 97%), hsl(36 28% 94%));
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  /* 👇 REGLAS DE ACCESIBILIDAD PARA LA CONFIGURACIÓN 👇 */
+  
+  /* 1. FUENTE PARA DISLEXIA */
+  html.font-dyslexic,
+  html.font-dyslexic * {
+    font-family: 'OpenDyslexic', sans-serif !important;
+  }
+
+  /* 2. ALTO CONTRASTE */
+  html.high-contrast {
+    filter: contrast(130%) saturate(120%);
+  }
+
+  /* 3. TAMAÑOS DE LETRA ESCALADOS */
+  html.text-grande {
+    font-size: 110% !important; 
+  }
+
+  html.text-gigante {
+    font-size: 125% !important; 
+  }
+}
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220 8% 80%);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 8% 70%);
+  }
+
+  ::selection {
+    background: hsl(140 18% 82%);
+    color: hsl(220 12% 28%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
