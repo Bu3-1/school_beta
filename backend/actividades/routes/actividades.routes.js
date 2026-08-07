@@ -8,7 +8,7 @@ import {
   getReporteAlumnos,
   getHistorialAlumno,
 } from "../src/controllers/actividades.controller.js";
-import { requireAuth } from "../src/middleware/requireAuth.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
