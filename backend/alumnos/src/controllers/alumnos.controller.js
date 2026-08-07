@@ -2,7 +2,9 @@ import prisma from "../lib/prisma.js";
 
 export const getAlumnos = async (req, res) => {
   try {
-    const data = await prisma.alumnos.findMany();
+    const data = await prisma.alumnos.findMany({
+      where: { id_maestro: req.maestro.id }, // usando el id del token, no de query params
+    });
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
