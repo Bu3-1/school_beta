@@ -18,10 +18,6 @@ export const AuthProvider = ({ children }) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [appPublicSettings, setAppPublicSettings] = useState(null);
 
-  // Antes esta función primero consultaba "public settings" de la app en
-  // una plataforma SaaS externa. Ese servicio no existe en este backend,
-  // así que aquí simplemente comprobamos si hay una sesión (token JWT)
-  // válida contra el servicio "alumnos" (apiClient.auth.me()).
   const checkUserAuth = useCallback(async () => {
     try {
       setIsLoadingAuth(true);
@@ -32,11 +28,8 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);
-      // Sin sesión (401/403) no es un "error" que deba mostrarse: es el
-      // estado normal antes de iniciar sesión. Cualquier otro problema
-      // (por ejemplo el backend caído) sí se expone.
       if (error.status === 401 || error.status === 403) {
-        setAuthError(null);
+        setAuthError({ type: "auth_required" });
       } else if (error.status !== undefined) {
         setAuthError({
           type: error.status === 0 ? "network" : "unknown",
@@ -74,8 +67,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Evita el loop de recargas: solo redirige si NO estamos ya en una
+  // página pública (login, register, etc.). Sin esto, cada vez que la
+  // página se recarga en /login, vuelve a detectar "sin sesión" y
+  // fuerza otra recarga a /login, infinitamente.
   const navigateToLogin = () => {
-    apiClient.auth.redirectToLogin();
+    const publicPaths = [
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password",
+    ];
+    if (!publicPaths.includes(window.location.pathname)) {
+      apiClient.auth.redirectToLogin();
+    }
   };
 
   return (

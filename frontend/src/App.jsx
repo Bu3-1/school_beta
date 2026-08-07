@@ -19,6 +19,13 @@ import Configuracion from "@/pages/Configuracion";
 import MotorActividades from "@/pages/MotorActividades";
 import Perfil from "@/pages/Perfil";
 
+const PUBLIC_PATHS = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } =
     useAuth();
@@ -32,8 +39,11 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
+  const isPublicPath = PUBLIC_PATHS.includes(window.location.pathname);
+
+  // Handle authentication errors (pero no si ya estamos en una página
+  // pública como /login: ahí solo queremos que se renderice esa ruta).
+  if (authError && !isPublicPath) {
     if (authError.type === "user_not_registered") {
       return <UserNotRegisteredError />;
     } else if (authError.type === "auth_required") {
