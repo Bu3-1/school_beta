@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, Plus, Trash2, Check, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { EmojiInput } from "@/components/ui/emojiPicker";
 
 const NIVELES = [
   "Presilábica",
@@ -319,14 +320,12 @@ export default function CrearActividad() {
               </div>
 
               <div className="space-y-2">
-                <Label>Emoji (opcional)</Label>
-                <Input
+                <Label className="pr-4">Emoji (opcional)</Label>
+                <EmojiInput
                   value={ej.emoji}
-                  onChange={(e) =>
-                    actualizarEjercicio(ejIndex, "emoji", e.target.value)
+                  onChange={(emoji) =>
+                    actualizarEjercicio(ejIndex, "emoji", emoji)
                   }
-                  placeholder="🐱"
-                  className="h-11 w-24"
                 />
               </div>
 
