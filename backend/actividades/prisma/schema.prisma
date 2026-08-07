@@ -25,9 +25,12 @@ model maestros {
 }
 
 model actividades {
-  id     Int    @id @default(autoincrement())
-  titulo String @db.VarChar(100)
-  nivel  String @db.VarChar(100)
+  id            Int      @id @default(autoincrement())
+  titulo        String
+  nivel         String
+  subseccion    String?
+  instrucciones String?
+  ejercicios    Json? 
 }
 
 model intentos_actividades {

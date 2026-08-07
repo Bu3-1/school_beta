@@ -110,9 +110,20 @@ export default function Home() {
               <h2 className="text-lg font-heading font-semibold text-foreground">
                 Aún no tienes alumnos
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1 mb-6">
                 Agrega tu primer alumno para comenzar
               </p>
+              <motion.button
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/registro-alumno")}
+                className="border-2 border-dashed border-border rounded-2xl p-5 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors min-h-32 mx-auto max-w-xs"
+              >
+                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
+                  <Plus className="w-6 h-6" />
+                </div>
+                <span className="font-medium text-sm">Agregar alumno</span>
+              </motion.button>
             </motion.div>
           ) : filteredAlumnos.length === 0 ? (
             <motion.div

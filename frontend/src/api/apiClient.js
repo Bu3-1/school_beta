@@ -4,7 +4,11 @@
 // para que ninguna página o componente del diseño tenga que cambiar:
 // solo se cambia lo que hay "detrás" de estas funciones.
 
-import { AUTH_API_URL, ALUMNOS_API_URL, ACTIVIDADES_API_URL } from "@/lib/api-config";
+import {
+  AUTH_API_URL,
+  ALUMNOS_API_URL,
+  ACTIVIDADES_API_URL,
+} from "@/lib/api-config";
 
 // ---------------------------------------------------------------------------
 // Sesión (token JWT emitido por el servicio "login")
@@ -45,7 +49,11 @@ let pendingRegistration = null;
 // Helper de peticiones HTTP
 // ---------------------------------------------------------------------------
 
-async function request(baseUrl, path, { method = "GET", body, auth = false } = {}) {
+async function request(
+  baseUrl,
+  path,
+  { method = "GET", body, auth = false } = {},
+) {
   const headers = { "Content-Type": "application/json" };
 
   if (auth) {
@@ -204,10 +212,18 @@ export const apiClient = {
         throw err;
       }
       try {
-        const fresh = await request(ALUMNOS_API_URL, `/api/maestros/${cached.id}`, {
-          auth: true,
-        });
-        const maestro = { id: fresh.id, nombre: fresh.nombre, correo: fresh.correo };
+        const fresh = await request(
+          ALUMNOS_API_URL,
+          `/api/maestros/${cached.id}`,
+          {
+            auth: true,
+          },
+        );
+        const maestro = {
+          id: fresh.id,
+          nombre: fresh.nombre,
+          correo: fresh.correo,
+        };
         localStorage.setItem(MAESTRO_KEY, JSON.stringify(maestro));
         return maestro;
       } catch (err) {
@@ -293,11 +309,15 @@ export const apiClient = {
   entities: {
     Alumno: {
       list: async (sort) => {
-        const rows = await request(ALUMNOS_API_URL, "/api/alumnos", { auth: true });
+        const rows = await request(ALUMNOS_API_URL, "/api/alumnos", {
+          auth: true,
+        });
         return sortBy(rows.map(backendToFrontAlumno), sort);
       },
       filter: async (filters = {}, sort) => {
-        const rows = await request(ALUMNOS_API_URL, "/api/alumnos", { auth: true });
+        const rows = await request(ALUMNOS_API_URL, "/api/alumnos", {
+          auth: true,
+        });
         let list = rows.map(backendToFrontAlumno);
         if (filters.id_maestro !== undefined) {
           list = list.filter(
@@ -342,15 +362,33 @@ export const apiClient = {
       filter: async (filters = {}) => {
         const rows = await request(ACTIVIDADES_API_URL, "/api/actividades");
         if (!filters.nivel) return rows;
-        const backendNivel = NIVEL_FRONT_TO_BACK[filters.nivel] || filters.nivel;
+        const backendNivel =
+          NIVEL_FRONT_TO_BACK[filters.nivel] || filters.nivel;
         return rows.filter((a) => a.nivel === backendNivel);
       },
       get: async (id) => request(ACTIVIDADES_API_URL, `/api/actividades/${id}`),
+      create: async (data) => {
+        const backendNivel = NIVEL_FRONT_TO_BACK[data.nivel] || data.nivel;
+        return request(ACTIVIDADES_API_URL, "/api/actividades", {
+          method: "POST",
+          auth: true,
+          body: {
+            titulo: data.titulo,
+            nivel: backendNivel,
+            subseccion: data.subseccion,
+            instrucciones: data.instrucciones,
+            ejercicios: data.ejercicios,
+          },
+        });
+      },
     },
 
     IntentoActividad: {
       filter: async (filters = {}, sort) => {
-        const rows = await request(ACTIVIDADES_API_URL, "/api/intentos-actividades");
+        const rows = await request(
+          ACTIVIDADES_API_URL,
+          "/api/intentos-actividades",
+        );
         let list = rows.map(backendToFrontIntento);
         if (filters.alumno_id !== undefined) {
           list = list.filter(
@@ -365,14 +403,18 @@ export const apiClient = {
         return sortBy(list, sort || "-fecha");
       },
       create: async (data) => {
-        const row = await request(ACTIVIDADES_API_URL, "/api/intentos-actividades", {
-          method: "POST",
-          body: {
-            id_alumno: Number(data.alumno_id),
-            id_actividad: Number(data.actividad_id),
-            puntaje: Number(data.puntaje),
+        const row = await request(
+          ACTIVIDADES_API_URL,
+          "/api/intentos-actividades",
+          {
+            method: "POST",
+            body: {
+              id_alumno: Number(data.alumno_id),
+              id_actividad: Number(data.actividad_id),
+              puntaje: Number(data.puntaje),
+            },
           },
-        });
+        );
         return backendToFrontIntento(row);
       },
     },

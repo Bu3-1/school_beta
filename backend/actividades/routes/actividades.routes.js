@@ -8,6 +8,7 @@ import {
   getReporteAlumnos,
   getHistorialAlumno,
 } from "../src/controllers/actividades.controller.js";
+import { requireAuth } from "../src/middleware/requireAuth.js";
 
 const router = Router();
 
@@ -18,8 +19,8 @@ router.get("/reportes/alumno/:id_alumno", getHistorialAlumno);
 // Rutas del CRUD de actividades
 router.get("/", getActividades);
 router.get("/:id", getActividadById);
-router.post("/", createActividad);
-router.put("/:id", updateActividad);
-router.delete("/:id", deleteActividad);
+router.post("/", requireAuth, createActividad);
+router.put("/:id", requireAuth, updateActividad);
+router.delete("/:id", requireAuth, deleteActividad);
 
 export default router;

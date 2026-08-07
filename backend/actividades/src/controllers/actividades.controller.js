@@ -23,8 +23,10 @@ export const getActividadById = async (req, res) => {
 
 export const createActividad = async (req, res) => {
   try {
-    const { titulo, nivel } = req.body;
-    const data = await prisma.actividades.create({ data: { titulo, nivel } });
+    const { titulo, nivel, subseccion, instrucciones, ejercicios } = req.body;
+    const data = await prisma.actividades.create({
+      data: { titulo, nivel, subseccion, instrucciones, ejercicios },
+    });
     res.status(201).json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });

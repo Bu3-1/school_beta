@@ -18,6 +18,7 @@ import ActividadesPorNivel from "@/pages/ActividadesPorNivel";
 import Configuracion from "@/pages/Configuracion";
 import MotorActividades from "@/pages/MotorActividades";
 import Perfil from "@/pages/Perfil";
+import CrearActividad from "@/pages/CrearActividad";
 
 const PUBLIC_PATHS = [
   "/login",
@@ -70,7 +71,8 @@ const AuthenticatedApp = () => {
           path="/actividades/:alumnoId/:nivel"
           element={<ActividadesPorNivel />}
         />
-
+        <Route path="/crear-actividad" element={<CrearActividad />} />
+        <Route path="/crear-actividad/:alumnoId" element={<CrearActividad />} />
         <Route
           path="/jugar/:alumnoId/:actividadId"
           element={<MotorActividades />}

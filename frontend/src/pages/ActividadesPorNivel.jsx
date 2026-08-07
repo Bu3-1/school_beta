@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "@/api/apiClient";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import ActividadCard from "@/components/ActividadCard";
 import { ACTIVIDADES_BOOKI } from "@/data/actividadesData"; // 👈 Cargar banco local si falta en API
 
@@ -37,8 +37,6 @@ export default function ActividadesPorNivel() {
         setAlumno(a);
         setIntentos(ints || []);
 
-        // Si la base de datos aún no devuelve actividades para este nivel,
-        // usamos las 28 actividades definidas en actividadesData.js
         if (acts && acts.length > 0) {
           setActividades(acts);
         } else {
@@ -49,7 +47,6 @@ export default function ActividadesPorNivel() {
         }
       })
       .catch(() => {
-        // Respaldo de seguridad en caso de error de red
         const locales = ACTIVIDADES_BOOKI.filter(
           (item) => item.nivel.toLowerCase() === decodedNivel.toLowerCase(),
         );
@@ -61,7 +58,6 @@ export default function ActividadesPorNivel() {
   const getIntentosForActividad = (actividadId) =>
     intentos.filter((i) => i.actividad_id === actividadId);
 
-  // Redirigir siempre directamente al Motor de Juegos Interactivo
   const handleIniciar = (actividadId) => {
     navigate(`/jugar/${alumnoId}/${actividadId}`);
   };
@@ -98,19 +94,28 @@ export default function ActividadesPorNivel() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="mb-8"
+        className="mb-8 flex items-start justify-between gap-4 flex-wrap"
       >
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>{alumno?.nombre_anonimizado}</span>
-          <span className="text-border">·</span>
-          <span className="font-medium text-primary">{decodedNivel}</span>
+        <div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{alumno?.nombre_anonimizado}</span>
+            <span className="text-border">·</span>
+            <span className="font-medium text-primary">{decodedNivel}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground mt-1">
+            Actividades disponibles
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Selecciona una actividad para trabajar con el alumno
+          </p>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground mt-1">
-          Actividades disponibles
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Selecciona una actividad para trabajar con el alumno
-        </p>
+
+        <button
+          onClick={() => navigate(`/crear-actividad/${alumnoId}`)}
+          className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="w-4 h-4" /> Nueva actividad
+        </button>
       </motion.div>
 
       {actividades.length === 0 ? (
@@ -139,7 +144,7 @@ export default function ActividadesPorNivel() {
               key={act.id}
               actividad={act}
               intentos={getIntentosForActividad(act.id)}
-              onIniciar={() => handleIniciar(act.id)} // 👈 Redirección directa
+              onIniciar={() => handleIniciar(act.id)}
             />
           ))}
         </motion.div>

@@ -21,7 +21,9 @@ export default function ActividadJuego() {
   const [terminado, setTerminado] = useState(false);
   const [guardando, setGuardando] = useState(false);
 
-  const juego = getJuego(actividadId);
+  const juego = actividad?.ejercicios?.ejercicios
+    ? { ejercicios: actividad.ejercicios.ejercicios }
+    : getJuego(actividadId);
 
   useEffect(() => {
     Promise.all([
@@ -38,7 +40,9 @@ export default function ActividadJuego() {
 
   const volverAActividades = () => {
     if (actividad?.nivel) {
-      navigate(`/actividades/${alumnoId}/${encodeURIComponent(actividad.nivel)}`);
+      navigate(
+        `/actividades/${alumnoId}/${encodeURIComponent(actividad.nivel)}`,
+      );
     } else {
       navigate(`/seleccion-nivel/${alumnoId}`);
     }
@@ -50,7 +54,9 @@ export default function ActividadJuego() {
 
     if (indice + 1 >= juego.ejercicios.length) {
       setTerminado(true);
-      const puntaje = Math.round((nuevosAciertos / juego.ejercicios.length) * 100);
+      const puntaje = Math.round(
+        (nuevosAciertos / juego.ejercicios.length) * 100,
+      );
       setGuardando(true);
       try {
         await apiClient.entities.IntentoActividad.create({
@@ -172,7 +178,8 @@ export default function ActividadJuego() {
 
               {guardando ? (
                 <p className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-6">
-                  <Loader2 className="w-4 h-4 animate-spin" /> Guardando resultado...
+                  <Loader2 className="w-4 h-4 animate-spin" /> Guardando
+                  resultado...
                 </p>
               ) : (
                 <button
