@@ -73,6 +73,7 @@ export default function CrearActividad() {
     nivel: NIVELES[0],
     subseccion: "",
     instrucciones: "",
+    historia: "",
   });
   const [ejercicios, setEjercicios] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -434,6 +435,22 @@ export default function CrearActividad() {
               rows={3}
               className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="historia">Historia / cuento (opcional)</Label>
+            <textarea
+              id="historia"
+              value={form.historia}
+              onChange={(e) => handleChange("historia", e.target.value)}
+              placeholder="Ej. Mi-mo es un ga-to ne-gro. Vi-ve en u-na ca-sa ro-ja..."
+              rows={4}
+              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Si la actividad se basa en un cuento breve, escríbelo aquí. Se
+              mostrará al alumno antes de empezar los ejercicios.
+            </p>
           </div>
         </div>
 

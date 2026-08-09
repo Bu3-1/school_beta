@@ -377,9 +377,17 @@ export const apiClient = {
             nivel: backendNivel,
             subseccion: data.subseccion,
             instrucciones: data.instrucciones,
+            historia: data.historia,
             ejercicios: data.ejercicios,
           },
         });
+      },
+      delete: async (id) => {
+        await request(ACTIVIDADES_API_URL, `/api/actividades/${id}`, {
+          method: "DELETE",
+          auth: true,
+        });
+        return true;
       },
     },
 

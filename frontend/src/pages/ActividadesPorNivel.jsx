@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { apiClient } from "@/api/apiClient";
 import { ArrowLeft, Plus } from "lucide-react";
 import ActividadCard from "@/components/ActividadCard";
-import { ACTIVIDADES_BOOKI } from "@/data/actividadesData"; // 👈 Cargar banco local si falta en API
+import { ACTIVIDADES_BOOKI } from "@/data/actividadesData";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -61,6 +61,16 @@ export default function ActividadesPorNivel() {
   const handleIniciar = (actividadId) => {
     navigate(`/jugar/${alumnoId}/${actividadId}`);
   };
+
+  // Agrupa las actividades del nivel por subsección, preservando el orden
+  // en que aparecen por primera vez (no las alfabetiza).
+  const gruposPorSubseccion = actividades.reduce((acc, act) => {
+    const clave = act.subseccion?.trim() || "General";
+    if (!acc[clave]) acc[clave] = [];
+    acc[clave].push(act);
+    return acc;
+  }, {});
+  const subsecciones = Object.keys(gruposPorSubseccion);
 
   if (loading) {
     return (
@@ -133,21 +143,30 @@ export default function ActividadesPorNivel() {
           </p>
         </motion.div>
       ) : (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-        >
-          {actividades.map((act) => (
-            <ActividadCard
-              key={act.id}
-              actividad={act}
-              intentos={getIntentosForActividad(act.id)}
-              onIniciar={() => handleIniciar(act.id)}
-            />
+        <div className="space-y-10">
+          {subsecciones.map((subseccion) => (
+            <div key={subseccion}>
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                {subseccion}
+              </h2>
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              >
+                {gruposPorSubseccion[subseccion].map((act) => (
+                  <ActividadCard
+                    key={act.id}
+                    actividad={act}
+                    intentos={getIntentosForActividad(act.id)}
+                    onIniciar={() => handleIniciar(act.id)}
+                  />
+                ))}
+              </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       )}
     </div>
   );

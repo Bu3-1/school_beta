@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trophy, Loader2 } from "lucide-react";
+import { ArrowLeft, Trophy, Loader2, BookOpen } from "lucide-react";
 import { apiClient } from "@/api/apiClient";
-import { getJuego } from "@/lib/actividadesContenido";
 import EjercicioOpcionMultiple from "@/components/juegos/EjercicioOpcionMultiple";
 import EjercicioConstruirPalabra from "@/components/juegos/EjercicioConstruirPalabra";
 import { toast } from "@/components/ui/use-toast";
+
+const construirJuego = (actividad) => {
+  if (!actividad) return null;
+
+  if (actividad.ejercicios?.ejercicios?.length) {
+    return { ejercicios: actividad.ejercicios.ejercicios };
+  }
+
+  if (actividad.preguntas?.length) {
+    return {
+      ejercicios: actividad.preguntas.map((p) => ({
+        tipo: "opcion_multiple",
+        enunciado: p.q,
+        opciones: p.opciones.map((o) => (typeof o === "string" ? o : o.l)),
+        correcta: p.correcta,
+      })),
+    };
+  }
+
+  return null;
+};
 
 export default function ActividadJuego() {
   const { alumnoId, actividadId } = useParams();
@@ -20,10 +40,9 @@ export default function ActividadJuego() {
   const [aciertos, setAciertos] = useState(0);
   const [terminado, setTerminado] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [mostrandoHistoria, setMostrandoHistoria] = useState(true);
 
-  const juego = actividad?.ejercicios?.ejercicios
-    ? { ejercicios: actividad.ejercicios.ejercicios }
-    : getJuego(actividadId);
+  const juego = construirJuego(actividad);
 
   useEffect(() => {
     Promise.all([
@@ -33,6 +52,7 @@ export default function ActividadJuego() {
       .then(([a, act]) => {
         setAlumno(a);
         setActividad(act);
+        setMostrandoHistoria(Boolean(act?.historia));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -88,6 +108,52 @@ export default function ActividadJuego() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
         <div className="h-8 w-64 rounded-lg bg-card border border-border animate-pulse mb-8" />
         <div className="h-64 rounded-2xl bg-card border border-border animate-pulse" />
+      </div>
+    );
+  }
+
+  if (mostrandoHistoria && actividad?.historia) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <button
+          onClick={volverAActividades}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver a actividades
+        </button>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card rounded-2xl border border-border shadow-sm p-6 sm:p-8"
+        >
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+            <span>{alumno?.nombre_anonimizado}</span>
+            <span className="text-border">·</span>
+            <span className="font-medium text-primary">{actividad?.nivel}</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-heading font-bold text-foreground mb-4">
+            {actividad?.titulo}
+          </h1>
+
+          <div className="flex items-center gap-2 text-accent mb-3">
+            <BookOpen className="w-5 h-5" />
+            <span className="text-sm font-semibold uppercase tracking-wider">
+              Lee el cuento
+            </span>
+          </div>
+
+          <p className="text-foreground leading-relaxed whitespace-pre-line text-lg">
+            {actividad.historia}
+          </p>
+
+          <button
+            onClick={() => setMostrandoHistoria(false)}
+            className="mt-8 w-full py-3 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors"
+          >
+            Comenzar actividad
+          </button>
+        </motion.div>
       </div>
     );
   }
