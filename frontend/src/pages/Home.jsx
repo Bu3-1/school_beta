@@ -36,6 +36,20 @@ export default function Home() {
     }
   };
 
+  const handleAlumnoEliminado = (idEliminado) => {
+    setAlumnos((prevAlumnos) =>
+      prevAlumnos.filter((alumno) => alumno.id !== idEliminado),
+    );
+  };
+
+  const handleAlumnoActualizado = (alumnoActualizado) => {
+    setAlumnos((prevAlumnos) =>
+      prevAlumnos.map((alumno) =>
+        alumno.id === alumnoActualizado.id ? alumnoActualizado : alumno,
+      ),
+    );
+  };
+
   const filteredAlumnos = alumnos.filter((alumno) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -152,6 +166,8 @@ export default function Home() {
                   alumno={alumno}
                   index={i}
                   onClick={() => navigate(`/seleccion-nivel/${alumno.id}`)}
+                  onAlumnoEliminado={handleAlumnoEliminado}
+                  onAlumnoActualizado={handleAlumnoActualizado}
                 />
               ))}
               <motion.button
