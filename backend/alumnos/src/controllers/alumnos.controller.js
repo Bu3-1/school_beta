@@ -3,11 +3,23 @@ import prismaReadOnly from "../lib/prismaReadOnly.js";
 
 export const getAlumnos = async (req, res) => {
   try {
-    const data = await prisma.alumnos.findMany({
-      where: { id_maestro: req.maestro.id }, // usando el id del token, no de query params
+    const idMaestro = Number(req.maestro?.id);
+
+    if (!idMaestro || isNaN(idMaestro)) {
+      return res
+        .status(401)
+        .json({ error: "Identificador de maestro inválido en el token" });
+    }
+
+    const data = await prismaReadOnly.alumnos.findMany({
+      where: {
+        id_maestro: idMaestro,
+      },
     });
+
     res.json(data);
   } catch (err) {
+    console.error("Error en getAlumnos:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -76,6 +88,9 @@ export const deleteAlumno = async (req, res) => {
 
 export const getReporteAlumnos = async (req, res) => {
   try {
+    const idMaestro = Number(req.maestro?.id);
+
+    // Si la vista incluye la columna id_maestro o requiere filtrado
     const data = await prismaReadOnly.$queryRaw`
       SELECT * FROM vista_estadisticas_alumnos;
     `;
