@@ -388,8 +388,12 @@ export const apiClient = {
         const rows = await request(
           ACTIVIDADES_API_URL,
           "/api/intentos-actividades",
+          {
+            auth: true,
+          },
         );
-        let list = rows.map(backendToFrontIntento);
+        let list = Array.isArray(rows) ? rows.map(backendToFrontIntento) : [];
+
         if (filters.alumno_id !== undefined) {
           list = list.filter(
             (i) => String(i.alumno_id) === String(filters.alumno_id),
@@ -402,12 +406,14 @@ export const apiClient = {
         }
         return sortBy(list, sort || "-fecha");
       },
+
       create: async (data) => {
-        const row = await request(
+        const response = await request(
           ACTIVIDADES_API_URL,
           "/api/intentos-actividades",
           {
             method: "POST",
+            auth: true,
             body: {
               id_alumno: Number(data.alumno_id),
               id_actividad: Number(data.actividad_id),
@@ -415,7 +421,15 @@ export const apiClient = {
             },
           },
         );
-        return backendToFrontIntento(row);
+
+        // Como el backend devuelve { mensaje, detalles }, mapeamos directamente con los datos enviados
+        return {
+          id: response.detalles?.id || Date.now(),
+          alumno_id: Number(data.alumno_id),
+          actividad_id: Number(data.actividad_id),
+          puntaje: Number(data.puntaje),
+          fecha: new Date().toISOString(),
+        };
       },
     },
 
