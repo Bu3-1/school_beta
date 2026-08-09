@@ -7,7 +7,7 @@ import {
   deleteAlumno,
   getReporteAlumnos,
   getHistorialAlumno,
-} from "../controllers/alumnos.controller.js";
+} from "../src/controllers/alumnos.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
