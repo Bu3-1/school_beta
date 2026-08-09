@@ -33,7 +33,6 @@ model actividades {
   id            Int                    @id @default(autoincrement())
   titulo        String
   nivel         String
-  ejercicios    Json?
   instrucciones String?
   subseccion    String?
   intentos      intentos_actividades[]
