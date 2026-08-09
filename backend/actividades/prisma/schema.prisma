@@ -37,6 +37,7 @@ model actividades {
   instrucciones String?
   subseccion    String?
   intentos      intentos_actividades[]
+  preguntas preguntas[]
 }
 
 model intentos_actividades {
@@ -51,6 +52,18 @@ model intentos_actividades {
   @@index([id_actividad], map: "idx_intentos_actividad")
   @@index([id_alumno], map: "idx_intentos_alumno")
   @@index([fecha], map: "idx_intentos_fecha")
+}
+
+model preguntas {
+  id                 Int         @id @default(autoincrement())
+  id_actividad       Int
+  num_pregunta       Int
+  enunciado          String
+  respuesta_correcta String
+  opciones           Json
+  historia           String?
+  actividades        actividades @relation(fields: [id_actividad], references: [id], onDelete: Cascade)
+  @@index([id_actividad])
 }
 
 model bitacora_intentos {
