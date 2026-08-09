@@ -29,6 +29,7 @@ export const getActividadById = async (req, res) => {
         nivel: true,
         subseccion: true,
         instrucciones: true,
+        historia: true,
       },
     });
     if (!actividad)
@@ -44,7 +45,6 @@ export const getActividadById = async (req, res) => {
       correcta: p.respuesta_correcta,
       opciones: p.opciones,
     }));
-    if (preguntas[0]?.historia) actividad.historia = preguntas[0].historia;
 
     res.json(actividad);
   } catch (err) {
@@ -54,10 +54,17 @@ export const getActividadById = async (req, res) => {
 
 export const createActividad = async (req, res) => {
   try {
-    const { titulo, nivel, subseccion, instrucciones, preguntas } = req.body;
+    const { titulo, nivel, subseccion, instrucciones, historia, preguntas } =
+      req.body;
     const actividad = await prisma.$transaction(async (tx) => {
       const nueva = await tx.actividades.create({
-        data: { titulo, nivel, subseccion, instrucciones },
+        data: {
+          titulo,
+          nivel,
+          subseccion,
+          instrucciones,
+          historia: historia ?? null,
+        },
       });
       if (preguntas?.length) {
         await tx.preguntas.createMany({
@@ -67,7 +74,6 @@ export const createActividad = async (req, res) => {
             enunciado: p.q,
             respuesta_correcta: p.correcta,
             opciones: p.opciones,
-            historia: p.historia ?? null,
           })),
         });
       }
@@ -81,7 +87,7 @@ export const createActividad = async (req, res) => {
 
 export const updateActividad = async (req, res) => {
   try {
-    const { titulo, nivel, subseccion, instrucciones } = req.body;
+    const { titulo, nivel, subseccion, instrucciones, historia } = req.body;
     const data = await prisma.actividades.update({
       where: { id: Number(req.params.id) },
       data: {
@@ -89,6 +95,7 @@ export const updateActividad = async (req, res) => {
         ...(nivel && { nivel }),
         ...(subseccion !== undefined && { subseccion }),
         ...(instrucciones !== undefined && { instrucciones }),
+        ...(historia !== undefined && { historia }),
       },
     });
     res.json(data);
@@ -99,7 +106,16 @@ export const updateActividad = async (req, res) => {
 
 export const deleteActividad = async (req, res) => {
   try {
-    await prisma.actividades.delete({ where: { id: Number(req.params.id) } });
+    const id = Number(req.params.id);
+    const tieneIntentos = await prisma.intentos_actividades.count({
+      where: { id_actividad: id },
+    });
+    if (tieneIntentos > 0) {
+      return res.status(409).json({
+        error: "No se puede eliminar: la actividad tiene intentos registrados",
+      });
+    }
+    await prisma.actividades.delete({ where: { id } });
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });

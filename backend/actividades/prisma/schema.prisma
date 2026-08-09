@@ -35,8 +35,9 @@ model actividades {
   nivel         String
   instrucciones String?
   subseccion    String?
+  historia      String?
   intentos      intentos_actividades[]
-  preguntas preguntas[]
+  preguntas     preguntas[]
 }
 
 model intentos_actividades {
@@ -45,8 +46,8 @@ model intentos_actividades {
   id_actividad Int
   puntaje      Int
   fecha        DateTime    @default(now()) @db.Timestamp(0)
-  alumnos      alumnos     @relation(fields: [id_alumno], references: [id])
   actividades  actividades @relation(fields: [id_actividad], references: [id])
+  alumnos      alumnos     @relation(fields: [id_alumno], references: [id])
 
   @@index([id_actividad], map: "idx_intentos_actividad")
   @@index([id_alumno], map: "idx_intentos_alumno")
@@ -60,8 +61,8 @@ model preguntas {
   enunciado          String
   respuesta_correcta String
   opciones           Json
-  historia           String?
   actividades        actividades @relation(fields: [id_actividad], references: [id], onDelete: Cascade)
+
   @@index([id_actividad])
 }
 
