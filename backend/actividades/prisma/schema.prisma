@@ -1,42 +1,63 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-}
-
-model alumnos {
-  id                   Int    @id @default(autoincrement())
-  nombre_anonimanizado String @db.VarChar(50)
-  edad                 Int
-  grado                Int
-  grupo                String @db.Text
-  condicion            String @db.VarChar(50)
-  id_maestro           Int
+  url      = env("DATABASE_URL")
 }
 
 model maestros {
-  id       Int    @id @default(autoincrement())
-  nombre   String @db.VarChar(100)
-  correo   String @unique(map: "correo") @db.VarChar(100)
-  password String @db.VarChar(255)
+  id       Int       @id @default(autoincrement())
+  nombre   String    @db.VarChar(100)
+  correo   String    @unique(map: "correo") @db.VarChar(100)
+  password String    @db.VarChar(255)
+  alumnos  alumnos[]
+}
+
+model alumnos {
+  id                   Int                    @id @default(autoincrement())
+  nombre_anonimanizado String                 @db.VarChar(50)
+  edad                 Int
+  grado                Int
+  grupo                String
+  condicion            String                 @db.VarChar(50)
+  id_maestro           Int
+  maestros             maestros               @relation(fields: [id_maestro], references: [id])
+  intentos             intentos_actividades[]
+
+  @@index([condicion], map: "idx_alumnos_condicion")
 }
 
 model actividades {
-  id            Int      @id @default(autoincrement())
+  id            Int                    @id @default(autoincrement())
   titulo        String
   nivel         String
-  subseccion    String?
+  ejercicios    Json?
   instrucciones String?
-  ejercicios    Json? 
+  subseccion    String?
+  intentos      intentos_actividades[]
 }
 
 model intentos_actividades {
-  id           Int      @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   id_alumno    Int
   id_actividad Int
   puntaje      Int
-  fecha        DateTime @default(now()) @db.Timestamp(0)
+  fecha        DateTime    @default(now()) @db.Timestamp(0)
+  alumnos      alumnos     @relation(fields: [id_alumno], references: [id])
+  actividades  actividades @relation(fields: [id_actividad], references: [id])
+
+  @@index([id_actividad], map: "idx_intentos_actividad")
+  @@index([id_alumno], map: "idx_intentos_alumno")
+  @@index([fecha], map: "idx_intentos_fecha")
+}
+
+model bitacora_intentos {
+  id             Int      @id @default(autoincrement())
+  id_intento     Int
+  id_alumno      Int
+  puntaje        Int
+  fecha_registro DateTime @default(now()) @db.Timestamp(6)
 }

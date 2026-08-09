@@ -12,9 +12,14 @@ model alumnos {
   nombre_anonimanizado String @db.VarChar(50)
   edad                 Int
   grado                Int
-  grupo                String @db.Text
+  grupo                String
   condicion            String @db.VarChar(50)
   id_maestro           Int
+
+  maestros             maestros               @relation(fields: [id_maestro], references: [id])
+  intentos             intentos_actividades[]
+
+  @@index([condicion], map: "idx_alumnos_condicion")
 }
 
 model maestros {
@@ -22,12 +27,19 @@ model maestros {
   nombre   String @db.VarChar(100)
   correo   String @unique(map: "correo") @db.VarChar(100)
   password String @db.VarChar(255)
+
+  alumnos  alumnos[]
 }
 
 model actividades {
-  id     Int    @id @default(autoincrement())
-  titulo String @db.VarChar(100)
-  nivel  String @db.VarChar(100)
+  id            Int     @id @default(autoincrement())
+  titulo        String
+  nivel         String
+  ejercicios    Json?
+  instrucciones String?
+  subseccion    String?
+
+  intentos      intentos_actividades[]
 }
 
 model intentos_actividades {
@@ -36,4 +48,19 @@ model intentos_actividades {
   id_actividad Int
   puntaje      Int
   fecha        DateTime @default(now()) @db.Timestamp(0)
+
+  alumnos     alumnos     @relation(fields: [id_alumno], references: [id])
+  actividades actividades @relation(fields: [id_actividad], references: [id])
+
+  @@index([id_actividad], map: "idx_intentos_actividad")
+  @@index([id_alumno], map: "idx_intentos_alumno")
+  @@index([fecha], map: "idx_intentos_fecha")
+}
+
+model bitacora_intentos {
+  id             Int      @id @default(autoincrement())
+  id_intento     Int
+  id_alumno      Int
+  puntaje        Int
+  fecha_registro DateTime @default(now()) @db.Timestamp(6)
 }

@@ -1,5 +1,7 @@
 import prisma from "../lib/prisma.js";
 
+/* RESERVADO PARA FUNCIONES FUTURAS, CUANDO SE AÑADA EL ROL DE COORDINADOR ESCOLAR */
+
 export const getMaestros = async (req, res) => {
   try {
     const data = await prisma.maestros.findMany({

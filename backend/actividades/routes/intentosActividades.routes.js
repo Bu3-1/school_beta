@@ -5,10 +5,12 @@ import {
   createIntento,
   updateIntento,
   deleteIntento,
-} from "../src/controllers/intentosActividades.controller.js";
+  getBitacoraIntentos,
+} from "../controllers/intentosActividades.controller.js";
 
 const router = Router();
 
+router.get("/bitacora", getBitacoraIntentos);
 router.get("/", getIntentos);
 router.get("/:id", getIntentoById);
 router.post("/", createIntento);

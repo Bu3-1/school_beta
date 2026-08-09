@@ -5,16 +5,16 @@ import {
   createActividad,
   updateActividad,
   deleteActividad,
-  getReporteAlumnos,
-  getHistorialAlumno,
+  getReporteActividades,
 } from "../src/controllers/actividades.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 // Rutas de reporte para el maestro
-router.get("/reportes/alumnos", getReporteAlumnos);
-router.get("/reportes/alumno/:id_alumno", getHistorialAlumno);
+router.get("/reporte", getReporteActividades);
+// router.get("/reportes/alumnos", getReporteAlumnos);
+// router.get("/reportes/alumno/:id_alumno", getHistorialAlumno);
 
 // Rutas del CRUD de actividades
 router.get("/", getActividades);
