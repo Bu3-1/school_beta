@@ -6,7 +6,7 @@ import {
   updateIntento,
   deleteIntento,
   getBitacoraIntentos,
-} from "../src/controllers/intentosActividades.controller";
+} from "../src/controllers/intentosActividades.controller.js";
 
 const router = Router();
 
