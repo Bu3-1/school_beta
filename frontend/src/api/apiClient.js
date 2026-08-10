@@ -136,17 +136,6 @@ const frontToBackendAlumno = (data) => {
 };
 
 // ---------------------------------------------------------------------------
-// Mapeo Nivel: el front usa formas femeninas y el backend masculinas.
-// ---------------------------------------------------------------------------
-
-const NIVEL_FRONT_TO_BACK = {
-  Presilábica: "Presilábico",
-  Silábica: "Silábico",
-  "Silábico-Alfabética": "Silábico-Alfabético",
-  Alfabética: "Alfabético",
-};
-
-// ---------------------------------------------------------------------------
 // Mapeo IntentoActividad
 // ---------------------------------------------------------------------------
 
@@ -193,6 +182,22 @@ const CONDICIONES = [
   { id: "tps", nombre: "Trastorno del Procesamiento Sensorial" },
   { id: "ninguna", nombre: "Ninguna" },
 ];
+
+const ejercicioAPregunta = (ej) => {
+  if (ej.tipo === "construir_palabra") {
+    return {
+      q: `Arma la palabra`,
+      opciones: ej.letras,
+      correcta: ej.palabraCorrecta,
+    };
+  }
+  // opcion_multiple
+  return {
+    q: ej.enunciado,
+    opciones: ej.opciones,
+    correcta: ej.correcta,
+  };
+};
 
 // ---------------------------------------------------------------------------
 // Cliente
@@ -362,23 +367,23 @@ export const apiClient = {
       filter: async (filters = {}) => {
         const rows = await request(ACTIVIDADES_API_URL, "/api/actividades");
         if (!filters.nivel) return rows;
-        const backendNivel =
-          NIVEL_FRONT_TO_BACK[filters.nivel] || filters.nivel;
-        return rows.filter((a) => a.nivel === backendNivel);
+        return rows.filter((a) => a.nivel === filters.nivel);
       },
       get: async (id) => request(ACTIVIDADES_API_URL, `/api/actividades/${id}`),
       create: async (data) => {
-        const backendNivel = NIVEL_FRONT_TO_BACK[data.nivel] || data.nivel;
+        const ejercicios = data.ejercicios?.ejercicios || [];
+        const preguntas = ejercicios.map(ejercicioAPregunta);
+
         return request(ACTIVIDADES_API_URL, "/api/actividades", {
           method: "POST",
           auth: true,
           body: {
             titulo: data.titulo,
-            nivel: backendNivel,
+            nivel: data.nivel,
             subseccion: data.subseccion,
             instrucciones: data.instrucciones,
             historia: data.historia,
-            ejercicios: data.ejercicios,
+            preguntas,
           },
         });
       },

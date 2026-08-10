@@ -62,6 +62,10 @@ export default function ActividadesPorNivel() {
     navigate(`/jugar/${alumnoId}/${actividadId}`);
   };
 
+  const handleActividadEliminada = (actividadId) => {
+    setActividades((prev) => prev.filter((a) => a.id !== actividadId));
+  };
+
   // Agrupa las actividades del nivel por subsección, preservando el orden
   // en que aparecen por primera vez (no las alfabetiza).
   const gruposPorSubseccion = actividades.reduce((acc, act) => {
@@ -161,6 +165,7 @@ export default function ActividadesPorNivel() {
                     actividad={act}
                     intentos={getIntentosForActividad(act.id)}
                     onIniciar={() => handleIniciar(act.id)}
+                    onActividadEliminada={handleActividadEliminada}
                   />
                 ))}
               </motion.div>
