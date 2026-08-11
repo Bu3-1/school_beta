@@ -77,30 +77,45 @@ export const googleLogin = async (req, res) => {
       return res.status(400).json({ error: "El token de Google es requerido" });
     }
 
-    // 1. Verificar el token con Google
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let correo, nombre;
 
-    const payload = ticket.getPayload();
-    const { email: correo, name: nombre } = payload;
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      correo = payload.email;
+      nombre = payload.name;
+    } catch {
+      // Si falla, intentamos validar como Access Token llamando a la API de Google
+      const googleRes = await fetch(
+        `https://www.googleapis.com/oauth2/v3/userinfo`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-    // 2. Buscar si el maestro ya existe
+      if (!googleRes.ok) {
+        throw new Error("Token inválido");
+      }
+
+      const userData = await googleRes.json();
+      correo = userData.email;
+      nombre = userData.name;
+    }
+
+    // Buscar o crear maestro en la BD
     let maestro = await prisma.maestros.findUnique({ where: { correo } });
 
-    // 3. Si no existe, crearlo (Registro automático)
     if (!maestro) {
       maestro = await prisma.maestros.create({
         data: {
           nombre: nombre || "Maestro Google",
           correo,
-          password: "", // Los usuarios autenticados con OAuth no requieren contraseña local
+          password: "",
         },
       });
     }
 
-    // 4. Generar el JWT propio de la app
     const jwtToken = signToken({ id: maestro.id, correo: maestro.correo });
 
     res.json({
