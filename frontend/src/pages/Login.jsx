@@ -8,6 +8,7 @@ import { Mail, Lock, Loader2, Eye, EyeOff, ArrowRight } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import PoliticasModal from "@/components/PoliticasModal";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,8 +16,6 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Estado para controlar el modal legal ("privacidad" | "terminos" | null)
   const [modalTipo, setModalTipo] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -33,9 +32,24 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = () => {
-    apiClient.auth.loginWithProvider("google", "/");
-  };
+  // Disparador del flujo OAuth con Google
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setError("");
+      setLoading(true);
+      try {
+        await apiClient.auth.loginWithGoogleToken(tokenResponse.access_token);
+        window.location.href = "/";
+      } catch (err) {
+        setError(err.message || "Error al iniciar sesión con Google");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError("No se pudo completar el inicio de sesión con Google");
+    },
+  });
 
   return (
     <>
@@ -54,7 +68,6 @@ export default function Login() {
               </Link>
             </span>
 
-            {/* Enlaces legales rápidos en el pie */}
             <div className="flex items-center gap-3 text-xs text-muted-foreground/80 dark:text-slate-400 pt-1">
               <button
                 type="button"
@@ -75,18 +88,19 @@ export default function Login() {
           </div>
         }
       >
-        {/* Botón de Google con alto contraste en dark mode */}
+        {/* Botón original con GoogleIcon */}
         <Button
           variant="outline"
           type="button"
           className="w-full h-12 text-sm font-semibold rounded-2xl border-2 border-border dark:border-slate-700 hover:border-purple-300 dark:hover:border-purple-400 bg-white dark:bg-slate-900/80 text-foreground dark:text-slate-100 transition-all shadow-xs hover:shadow-md active:scale-[0.99] flex items-center justify-center gap-2 mb-6 cursor-pointer"
-          onClick={handleGoogle}
+          onClick={() => handleGoogleLogin()}
+          disabled={loading}
         >
           <GoogleIcon className="w-5 h-5 mr-1" />
           Continuar con Google
         </Button>
 
-        {/* Separador legible */}
+        {/* Separador */}
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border dark:border-slate-700/80" />
@@ -179,7 +193,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Botón Principal con resplandor */}
           <Button
             type="submit"
             className="w-full h-12 rounded-2xl font-bold text-sm bg-[#3B0A5E] hover:bg-[#4A1D6D] dark:bg-purple-600 dark:hover:bg-purple-500 text-white border-0 shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 group cursor-pointer"
@@ -198,7 +211,6 @@ export default function Login() {
             )}
           </Button>
 
-          {/* Leyenda legal al pie del formulario */}
           <p className="text-[11px] text-center text-muted-foreground/80 dark:text-slate-400 leading-relaxed pt-2">
             Al iniciar sesión, aceptas nuestros{" "}
             <button
@@ -221,7 +233,6 @@ export default function Login() {
         </form>
       </AuthLayout>
 
-      {/* Modal flotante legal */}
       <PoliticasModal
         isOpen={!!modalTipo}
         onClose={() => setModalTipo(null)}

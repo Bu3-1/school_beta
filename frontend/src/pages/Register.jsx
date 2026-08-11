@@ -13,6 +13,7 @@ import {
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -72,9 +73,24 @@ export default function Register() {
     }
   };
 
-  const handleGoogle = () => {
-    apiClient.auth.loginWithProvider("google", "/");
-  };
+  // Disparador del flujo OAuth con Google
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setError("");
+      setLoading(true);
+      try {
+        await apiClient.auth.loginWithGoogleToken(tokenResponse.access_token);
+        window.location.href = "/";
+      } catch (err) {
+        setError(err.message || "Error al registrarse con Google");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError("No se pudo completar el registro con Google");
+    },
+  });
 
   if (showOtp) {
     return (
@@ -147,8 +163,10 @@ export default function Register() {
     >
       <Button
         variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
-        onClick={handleGoogle}
+        type="button"
+        className="w-full h-12 text-sm font-medium mb-6 flex items-center justify-center cursor-pointer"
+        onClick={() => handleGoogleLogin()}
+        disabled={loading}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
         Continuar con Google

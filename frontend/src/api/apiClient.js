@@ -248,8 +248,16 @@ export const apiClient = {
       return data.maestro;
     },
 
-    // El backend no tiene integración con Google OAuth: se avisa en vez
-    // de simular una sesión falsa.
+    // Envía el access_token otorgado por @react-oauth/google al backend
+    loginWithGoogleToken: async (accessToken) => {
+      const data = await request(AUTH_API_URL, "/google-login", {
+        method: "POST",
+        body: { token: accessToken },
+      });
+      setSession(data.token, data.maestro);
+      return data.maestro;
+    },
+
     loginWithProvider: async () => {
       window.alert(
         "El inicio de sesión con Google no está disponible en este backend todavía. Usa tu correo y contraseña.",
