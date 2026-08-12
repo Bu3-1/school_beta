@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bookie-lectura.netlify.app/sitemap.xml
